@@ -4,7 +4,7 @@
 
 `include "bus.h"
 
-module bus_master_multiplexer(
+module yutorina_bus_master_multiplexer(
   input wire [`YutorinaWordAddressBus] master0_address,
   input wire master0_address_strobe_,
   input wire master0_read_write,
@@ -35,23 +35,23 @@ module bus_master_multiplexer(
       master1_grant_ == `YUTORINA_ENABLE_ ? master1_grant_ :
       master2_grant_ == `YUTORINA_ENABLE_ ? master2_grant_ :
       master3_grant_ == `YUTORINA_ENABLE_ ? master3_grant_ :
-	    `YUTORINA_WORD_ADDRESS_WIDTH'h0;
-	assign slave_address_strobe_ 
-	  = master0_grant_ == `YUTORINA_ENABLE_ ? master0_address_strobe_ :
+      `YUTORINA_WORD_ADDRESS_WIDTH'h0;
+  assign slave_address_strobe_ 
+    = master0_grant_ == `YUTORINA_ENABLE_ ? master0_address_strobe_ :
       master1_grant_ == `YUTORINA_ENABLE_ ? master1_address_strobe_ :
       master2_grant_ == `YUTORINA_ENABLE_ ? master2_address_strobe_ :
       master3_grant_ == `YUTORINA_ENABLE_ ? master3_address_strobe_ :
-	    `YUTORINA_DISABLE_;
-	assign slave_read_write
-	  = master0_read_write == `YUTORINA_ENABLE_ ? master0_read_write :
+      `YUTORINA_DISABLE_;
+  assign slave_read_write
+    = master0_read_write == `YUTORINA_ENABLE_ ? master0_read_write :
       master1_read_write == `YUTORINA_ENABLE_ ? master1_read_write :
       master2_read_write == `YUTORINA_ENABLE_ ? master2_read_write :
       master3_read_write == `YUTORINA_ENABLE_ ? master3_read_write :
-	    `YUTORINA_READ;
-	assign slave_write_data 
-	  = master0_write_data == `YUTORINA_ENABLE_ ? master0_write_data :
+      `YUTORINA_READ;
+  assign slave_write_data 
+    = master0_write_data == `YUTORINA_ENABLE_ ? master0_write_data :
       master1_write_data == `YUTORINA_ENABLE_ ? master1_write_data :
       master2_write_data == `YUTORINA_ENABLE_ ? master2_write_data :
       master3_write_data == `YUTORINA_ENABLE_ ? master3_write_data :
-	    `YUTORINA_WORD_DATA_WIDTH'h0;
+      `YUTORINA_WORD_DATA_WIDTH'h0;
 endmodule

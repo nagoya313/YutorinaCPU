@@ -4,14 +4,15 @@
 
 `include "isa.h"
 
-module gpr(input wire clock, input wire reset,
-           input wire [`YutorinaRegisterAddressBus] read_address0,
-           output wire [`YutorinaWordDataBus] read_data0,
-           input wire [`YutorinaRegisterAddressBus] read_address1,
-           output wire [`YutorinaWordDataBus] read_data1,
-           input wire write_enable_,
-           input wire [`YutorinaRegisterAddressBus] write_address,
-           output wire [`YutorinaWordDataBus] write_data);
+module yutorina_gpr(
+  input wire clock, input wire reset,
+  input wire [`YutorinaRegisterAddressBus] read_address0,
+  output wire [`YutorinaWordDataBus] read_data0,
+  input wire [`YutorinaRegisterAddressBus] read_address1,
+  output wire [`YutorinaWordDataBus] read_data1,
+  input wire write_enable_,
+  input wire [`YutorinaRegisterAddressBus] write_address,
+  output wire [`YutorinaWordDataBus] write_data);
   reg [`YutorinaWordDataBus] gprs[`YUTORINA_REGISTER_NUM - 1 : 0];
   integer i;
   // 同じレジスタへの書込みと讀込みが同時だつたら

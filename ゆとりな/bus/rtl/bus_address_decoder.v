@@ -4,15 +4,16 @@
 
 `include "bus.h"
 
-module bus_address_decoder(input wire [`YutorinaWordAddressBus] slave_address,
-                           output wire slave0_chip_select_,
-                           output wire slave1_chip_select_,
-                           output wire slave2_chip_select_,
-                           output wire slave3_chip_select_,
-                           output wire slave4_chip_select_,
-                           output wire slave5_chip_select_,
-                           output wire slave6_chip_select_,
-                           output wire slave7_chip_select_);
+module yutorina_bus_address_decoder(
+  input wire [`YutorinaWordAddressBus] slave_address,
+  output wire slave0_chip_select_,
+  output wire slave1_chip_select_,
+  output wire slave2_chip_select_,
+  output wire slave3_chip_select_,
+  output wire slave4_chip_select_,
+  output wire slave5_chip_select_,
+  output wire slave6_chip_select_,
+  output wire slave7_chip_select_);
   wire [`YutorinaBusSlaveIndexBus] slave_index
     = slave_address[`YutorinaBysSlaveIndexLocale];
   // アドレスに對應するスレーブの選擇

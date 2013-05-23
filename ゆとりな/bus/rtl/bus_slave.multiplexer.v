@@ -4,7 +4,7 @@
 
 `include "bus.h"
 
-module bus_slave_multiplexer(
+module yutorina_bus_slave_multiplexer(
   input wire slave0_chip_select_,
   input wire [`YutorinaWordDataBus] slave0_read_data,
   input wire slave0_ready_,
