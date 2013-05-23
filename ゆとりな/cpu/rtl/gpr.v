@@ -4,6 +4,8 @@
 
 `include "isa.h"
 
+`timescale 1ns/1ps
+
 module yutorina_gpr(
   input wire clock, input wire reset,
   input wire [`YutorinaRegisterAddressBus] read_address0,
@@ -17,10 +19,10 @@ module yutorina_gpr(
   integer i;
   // 同じレジスタへの書込みと讀込みが同時だつたら
   // 書込まれたデータを出す
-  assign read_data0 = ((write_enable_ == `YUTORINA_ENABLE) &&
+  assign read_data0 = ((write_enable_ == `YUTORINA_ENABLE_) &&
                        (write_address == read_address0)) ?
                       write_data : gprs[read_address0];
-  assign read_data1 = ((write_enable_ == `YUTORINA_ENABLE) &&
+  assign read_data1 = ((write_enable_ == `YUTORINA_ENABLE_) &&
                        (write_address == read_address1)) ?
                       write_data : gprs[read_address1];
   // レジスタ書込み
@@ -28,7 +30,7 @@ module yutorina_gpr(
   always @(posedge clock or `YUTORINA_RESET_EDGE reset) begin
     if (reset == `YUTORINA_RESET_ENABLE) begin
       for (i = 0; i < `YUTORINA_REGISTER_NUM; i = i + 1) begin
-        gprs[0] <= #1 `YUTORINA_WORD_DATA_WIDTH'h0;
+        gprs[i] <= #1 `YUTORINA_WORD_DATA_WIDTH'h0;
       end
     end else begin
       if (write_enable_ == `YUTORINA_ENABLE_ &&
