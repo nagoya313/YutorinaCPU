@@ -7,33 +7,20 @@
 `timescale 1ns/1ps
 
 module yutorina_spm(
-  input wire clock,
-  input wire [`YutorinaSpmAddressBus] instruction_address,
-  input wire instruction_address_strobe_, input wire instruction_read_write,
-  input wire [`YutorinaWordDataBus] instruction_write_data,
-  output wire [`YutorinaWordDataBus] instruction_read_data,
-  input wire [`YutorinaSpmAddressBus] data_address,
-  input wire data_address_strobe_, input wire data_read_write,
-  input wire [`YutorinaWordDataBus] data_write_data,
-  output wire [`YutorinaWordDataBus] data_read_data);
-  wire write_enable_port_a;
-  wire write_enable_port_b;
-  assign write_enable_port_a
-    = ((instruction_address_strobe_ == `YUTORINA_ENABLE_) &&
-       (instruction_read_write == `YUTORINA_WRITE)) ?
-       `YUTORINA_ENABLE : `YUTORINA_DISABLE;
-  assign write_enable_port_b
-    = ((data_address_strobe_ == `YUTORINA_ENABLE_) &&
-       (data_read_write == `YUTORINA_WRITE)) ?
-       `YUTORINA_ENABLE : `YUTORINA_DISABLE;
-  x_s3e_dpram x_s3e_dpram(.clka (clock),
-                          .addra (instruction_address),
-                          .dina (instruction_write_data),
-                          .wea (write_enable_port_a),
-                          .douta (instruction_read_data),
-                          .clkb (clock),
-                          .addrb (data_address),
-                          .dinb (data_write_data),
-                          .web (write_enable_port_b),
-                          .doutb (data_read_data));
+  input wire clk,
+  input wire [`SpmAddrBus] i_addr, input wire i_as_,
+  output wire [`WordDataBus] i_rd_data,
+  input wire [`SpmAddrBus] d_addr, input wire d_as_, input wire d_rw,
+  input wire [`WordDataBus] d_wr_data, output wire [`WordDataBus] d_rd_data);
+  wire we_a;
+  wire we_b;
+  // 命令ポートは常に書込み不可
+  // 入力は取敢ずデータのを流しておく
+  assign we_a = `DISABLE;
+  assign we_b = (d_as_ == `ENABLE_) && (d_rw == `WRITE) ? `ENABLE : `DISABLE;
+  // ザイリンクスのでゆあるぽーとめもり
+  x_s3e_dpram x_s3e_dpram(.clka (clk), .addra (i_addr), .dina (d_wr_data),
+                          .wea (we_a), .douta (i_rd_data),
+                          .clkb (clk), .addrb (d_addr), .dinb (d_wr_data),
+                          .web (we_b), .doutb (d_rd_data));
 endmodule

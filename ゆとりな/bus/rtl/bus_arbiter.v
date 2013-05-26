@@ -4,71 +4,65 @@
 
 `include "bus.h"
 
-module yutorina_bus_arbiter(
-  input wire clock, input wire reset,
-  input wire master0_request_, output wire master0_grant_,
-  input wire master1_request_, output wire master1_grant_,
-  input wire master2_request_, output wire master2_grant_,
-  input wire master3_request_, output wire master3_grant_);
-  reg [`YutorinaBusOwnerBus] owner;
+`timescale 1ns/1ps
+
+module yutorina_bus_arbiter(input wire clk, input wire rst,
+                            input wire m0_req_, output wire m0_grnt_,
+                            input wire m1_req_, output wire m1_grnt_,
+                            input wire m2_req_, output wire m2_grnt_,
+                            input wire m3_req_, output wire m3_grnt_);
+  reg [`BusOwnerBus] owner;
   // バスグラント生成
-  assign master0_grant_ = owner == `YUTORINA_BUS_OWNER_MASTER_0 ?
-                          `YUTORINA_ENABLE_ : `YUTORINA_DISABLE_;
-  assign master1_grant_ = owner == `YUTORINA_BUS_OWNER_MASTER_1 ?
-                          `YUTORINA_ENABLE_ : `YUTORINA_DISABLE_;
-  assign master2_grant_ = owner == `YUTORINA_BUS_OWNER_MASTER_2 ?
-                          `YUTORINA_ENABLE_ : `YUTORINA_DISABLE_;
-  assign master3_grant_ = owner == `YUTORINA_BUS_OWNER_MASTER_3 ?
-                          `YUTORINA_ENABLE_ : `YUTORINA_DISABLE_;
+  assign m0_grnt_ = owner == `BUS_OWNER_MASTER_0 ? `ENABLE_ : `DISABLE_;
+  assign m1_grnt_ = owner == `BUS_OWNER_MASTER_1 ? `ENABLE_ : `DISABLE_;
+  assign m2_grnt_ = owner == `BUS_OWNER_MASTER_2 ? `ENABLE_ : `DISABLE_;
+  assign m3_grnt_ = owner == `BUS_OWNER_MASTER_3 ? `ENABLE_ : `DISABLE_;
   // バス權アービトレーション
   // らうんどろびん的な何か
-  always @(posedge clock or `YUTORINA_RESET_EDGE reset) begin
-    if (reset == `YUTORINA_RESET_ENABLE) begin
-      owner <= #1 `YUTORINA_BUS_OWNER_MASTER_0;
+  always @(posedge clk or `RESET_EDGE rst) begin
+    if (rst == `RESET_ENABLE) begin
+      owner <= #1 `BUS_OWNER_MASTER_0;
     end else begin
       case (owner)
-        `YUTORINA_BUS_OWNER_MASTER_0 : begin
-          if (master0_request_ == `YUTORINA_ENABLE_) begin
-            owner <= #1 `YUTORINA_BUS_OWNER_MASTER_0;
-          end else if (master1_request_ == `YUTORINA_ENABLE_) begin
-            owner <= #1 `YUTORINA_BUS_OWNER_MASTER_1;
-          end else if (master2_request_ == `YUTORINA_ENABLE_) begin
-            owner <= #1 `YUTORINA_BUS_OWNER_MASTER_2;
-          end else if (master3_request_ == `YUTORINA_ENABLE_) begin
-            owner <= #1 `YUTORINA_BUS_OWNER_MASTER_3;
+        `BUS_OWNER_MASTER_0 : begin
+          if (m0_req_ == `ENABLE_) begin
+            owner <= #1 `BUS_OWNER_MASTER_0;
+          end else if (m1_req_ == `ENABLE_) begin
+            owner <= #1 `BUS_OWNER_MASTER_1;
+          end else if (m2_req_ == `ENABLE_) begin
+            owner <= #1 `BUS_OWNER_MASTER_2;
+          end else if (m3_req_ == `ENABLE_) begin
+            owner <= #1 `BUS_OWNER_MASTER_3;
           end
-        end
-        `YUTORINA_BUS_OWNER_MASTER_1 : begin
-          if (master1_request_ == `YUTORINA_ENABLE_) begin
-            owner <= #1 `YUTORINA_BUS_OWNER_MASTER_1;
-          end else if (master2_request_ == `YUTORINA_ENABLE_) begin
-            owner <= #1 `YUTORINA_BUS_OWNER_MASTER_2;
-          end else if (master3_request_ == `YUTORINA_ENABLE_) begin
-            owner <= #1 `YUTORINA_BUS_OWNER_MASTER_3;
-          end else if (master0_request_ == `YUTORINA_ENABLE_) begin
-            owner <= #1 `YUTORINA_BUS_OWNER_MASTER_0;
+        end `BUS_OWNER_MASTER_1 : begin
+          if (m1_req_ == `ENABLE_) begin
+            owner <= #1 `BUS_OWNER_MASTER_1;
+          end else if (m2_req_ == `ENABLE_) begin
+            owner <= #1 `BUS_OWNER_MASTER_2;
+          end else if (m3_req_ == `ENABLE_) begin
+            owner <= #1 `BUS_OWNER_MASTER_3;
+          end else if (m0_req_ == `ENABLE_) begin
+            owner <= #1 `BUS_OWNER_MASTER_0;
           end
-        end
-        `YUTORINA_BUS_OWNER_MASTER_2 : begin
-          if (master2_request_ == `YUTORINA_ENABLE_) begin
-            owner <= #1 `YUTORINA_BUS_OWNER_MASTER_2;
-          end else if (master3_request_ == `YUTORINA_ENABLE_) begin
-            owner <= #1 `YUTORINA_BUS_OWNER_MASTER_3;
-          end else if (master0_request_ == `YUTORINA_ENABLE_) begin
-            owner <= #1 `YUTORINA_BUS_OWNER_MASTER_0;
-          end else if (master1_request_ == `YUTORINA_ENABLE_) begin
-            owner <= #1 `YUTORINA_BUS_OWNER_MASTER_1;
+        end `BUS_OWNER_MASTER_2 : begin
+          if (m2_req_ == `ENABLE_) begin
+            owner <= #1 `BUS_OWNER_MASTER_2;
+          end else if (m3_req_ == `ENABLE_) begin
+            owner <= #1 `BUS_OWNER_MASTER_3;
+          end else if (m0_req_ == `ENABLE_) begin
+            owner <= #1 `BUS_OWNER_MASTER_0;
+          end else if (m1_req_ == `ENABLE_) begin
+            owner <= #1 `BUS_OWNER_MASTER_1;
           end
-        end
-        `YUTORINA_BUS_OWNER_MASTER_3 : begin
-          if (master3_request_ == `YUTORINA_ENABLE_) begin
-            owner <= #1 `YUTORINA_BUS_OWNER_MASTER_3;
-          end else if (master0_request_ == `YUTORINA_ENABLE_) begin
-            owner <= #1 `YUTORINA_BUS_OWNER_MASTER_0;
-          end else if (master1_request_ == `YUTORINA_ENABLE_) begin
-            owner <= #1 `YUTORINA_BUS_OWNER_MASTER_1;
-          end else if (master2_request_ == `YUTORINA_ENABLE_) begin
-            owner <= #1 `YUTORINA_BUS_OWNER_MASTER_2;
+        end `BUS_OWNER_MASTER_3 : begin
+          if (m3_req_ == `ENABLE_) begin
+            owner <= #1 `BUS_OWNER_MASTER_3;
+          end else if (m0_req_ == `ENABLE_) begin
+            owner <= #1 `BUS_OWNER_MASTER_0;
+          end else if (m1_req_ == `ENABLE_) begin
+            owner <= #1 `BUS_OWNER_MASTER_1;
+          end else if (m2_req_ == `ENABLE_) begin
+            owner <= #1 `BUS_OWNER_MASTER_2;
           end
         end
       endcase

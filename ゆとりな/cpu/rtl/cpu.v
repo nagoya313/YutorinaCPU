@@ -7,70 +7,27 @@
 
 `timescale 1ns/1ps
 
-module yutorina_cpu(input wire clock, input wire clock_, input wire reset);
-  // SPM關聯
-  wire [`YutorinaSpmAddressBus] spm_instruction_address;
-  wire spm_instruction_address_strobe_;
-  wire spm_instruction_read_write;
-  wire [`YutorinaWordDataBus] spm_instruction_write_data;
-  wire [`YutorinaWordDataBus] spm_instruction_read_data;
-  wire [`YutorinaSpmAddressBus] spm_data_address;
-  wire spm_data_address_strobe_;
-  wire spm_data_read_write;
-  wire [`YutorinaWordDataBus] spm_data_write_data;
-  wire [`YutorinaWordDataBus] spm_data_read_data;
-  // レジスタ關聯
-  wire [`YutorinaRegisterAddressBus] register_read_address0;
-  wire [`YutorinaWordDataBus] register_read_data0;
-  wire [`YutorinaRegisterAddressBus] register_read_address1;
-  wire [`YutorinaWordDataBus] register_read_data1;
-  wire register_write_enable_;
-  wire [`YutorinaRegisterAddressBus] register_write_address;
-  wire [`YutorinaWordDataBus] register_write_data;
-  // 命令關聯
-  wire [`YutorinaALUOpcodeBus] alu_opcode;
-  wire [`YutorinaWordDataBus] instruction;
-  wire [`YutorinaWordDataBus] lhs;
-  wire [`YutorinaWordDataBus] rhs;
-  // 命令を讀む
-  yutorina_instruction_fetch instruction_fetch(
-    .clock (clock), .reset(reset),
-    .spm_read_data (spm_instruction_read_data),
-    .spm_read_addreess (spm_instruction_address),
-    .instruction (instruction));
-  // 命令を解析
-  yutorina_instruction_decoder instruction_decoder(
-    .instruction (instruction), .alu_opcode (alu_opcode),
-    .result_register_address (register_write_address), 
-    .left_register_read_address (register_read_address0), 
-    .right_register_read_address (register_read_address1),
-    .left_register_read_data (register_read_data0),
-    .right_register_read_data (register_read_data1),
-    .lhs(lhs), .rhs(rhs),
-    .register_write_enable_ (register_write_enable_));
-  // ALU
-  yutorina_alu alu(.opcode (alu_opcode), .result(register_write_data),
-                   .lhs (lhs), .rhs (rhs));
+module yutorina_cpu(input wire clk, input wire clk_, input wire rst,
+                    input wire [`WordDataBus] bus_rd_data,
+                    input wire bus_rdy_, output wire bus_req_,
+                    output wire [`WordAddrBus] bus_addr,
+                    output wire bus_as_, output bus_rw,
+                    output wire [`WordDataBus] bus_wr_data,
+                    input wire bus_grnt_);
+  reg [`WordAddrBus] pc;
+  // はや〜いメモリ關聯
+  wire [`SpmAddrBus] spm_i_addr;
+  wire spm_i_as_;
+  wire [`WordDataBus] spm_i_rd_data;
+  wire [`SpmAddrBus] spm_d_addr;
+  wire spm_d_as_;
+  wire spm_d_rw;
+  wire [`WordDataBus] spm_d_wr_data;
+  wire [`WordDataBus] spm_d_rd_data;
   // はや〜いメモリ
   yutorina_spm spm(
-    .clock (clock_),
-    .instruction_address (spm_instruction_address),
-    .instruction_address_strobe_ (spm_instruction_address_strobe_),
-    .instruction_read_write (spm_instruction_read_write),
-    .instruction_write_data (spm_instruction_write_data),
-    .instruction_read_data (spm_instruction_read_data),
-    .data_address (spm_data_address),
-    .data_address_strobe_ (spm_data_address_strobe_),
-    .data_read_write (spm_data_read_write),
-    .data_write_data (spm_data_write_data),
-    .data_read_data (spm_data_read_data));
-  // 汎用レジスタ
-  yutorina_gpr gpr(.clock (clock), .reset (reset),
-                   .read_address0 (register_read_address0),
-                   .read_data0 (register_read_data0),
-                   .read_address1 (register_read_address1),
-                   .read_data1 (register_read_data1),
-                   .write_enable_ (register_write_enable_),
-                   .write_address (register_write_address), 
-                   .write_data (register_write_data));
+    .clk (clk_),
+    .i_addr (spm_i_addr), .i_as_ (spm_i_as_), .i_rd_data (spm_i_rd_data),
+    .d_addr (spm_d_addr), .d_as_ (spm_d_as_), .d_rw (spm_d_rw),
+    .d_wr_data (spm_d_wr_data), .d_rd_data (spm_d_rd_data));
 endmodule

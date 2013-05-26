@@ -1,114 +1,112 @@
 `ifndef __YUTORINA_CPU_ISA_H__
 `define __YUTORINA_CPU_ISA_H__
 
-`define YUTORINA_REGISTER_NUM           32
-`define YUTORINA_REGISTER_ADDRESS_WIDTH 5
-`define YutorinaRegisterAddressBus      4:0
+`define ISA_NOP 32'b0
 
-// 命令フォーマット
-// R3形式
-// 31:26：種類
-// 25:21：對象レジスタ
-// 20:16：左邊レジスタ
-// 15:11：右邊レジスタ
-// 10::0：オプションなど
-// R2形式
-// 31:26：種類
-// 25:21：對象レジスタ
-// 20:16：右邊レジスタ
-// 15:0：即値など
-// R1形式
-// 31:26：種類
-// 25:21：對象レジスタ
-// 20:0：即値など
-// R0形式
-// 31:26：種類
-// 25:0：即値など
+// オペコード
+`define OpBus    5:0
+`define OpLocale 31:26
 
-`define YUTORINA_ISA_NOP 32'b0
+// レジスタ
+`define DRegLocale 25:21
+`define LRegLocale 20:16
+`define RRegLocale 15:11
 
-`define YutorinaOpcodeBus    5:0
-`define YutorinaOpcodeLocale 31:26
+// 即値
+`define ImmBus     15:0
+`define ImmLocale  15:0
+`define JImmBus    25:0
+`define JImmLocale 25:0
 
-`define YutorinaResultRegisterLocale 25:21
-`define YutorinaLeftRegisterLocale   20:16
-`define YutorinaRightRegisterLocale  15:11
-
-`define YutorinaImmediate2Locale 15:0
-`define YutorinaImmediate1Locale 20:0
-`define YutorinaImmediate0Locale 25:0
-`define YutorinaFuncLocale       10:0
+// 機能コード
+`define FuncBus    5:0
+`define FuncLocale 5:0
 
 // 種類
-// 算術命令
-// 31:26=000000
-// 25:21=對象レジスタ、20:16=左邊レジスタ、15:11=右邊レジスタ
-// 10:0=オプション
-`define YUTORINA_OPCODE_ARITHMETIC 6'b000000
+// 算術・論理演算命令
+`define OP_AL 6'b000000
 
-`define YUTORINA_FUNC_ADD                    10'b0000000000
-`define YUTORINA_FUNC_SUB                    10'b0000000001
-`define YUTORINA_FUNC_AND                    10'b0000000010
-`define YUTORINA_FUNC_OR                     10'b0000000011
-`define YUTORINA_FUNC_XOR                    10'b0000000100
-`define YUTORINA_FUNC_LOGICAL_SHIFT_LEFT     10'b0000000101
-`define YUTORINA_FUNC_LOGICAL_SHIFT_RIGHT    10'b0000000110
-`define YUTORINA_FUNC_SET_LESS_THAN          10'b0000000111
-`define YUTORINA_FUNC_ARITHMETIC_SHIFT_LEFT  10'b0000001101
-`define YUTORINA_FUNC_ARITHMETIC_SHIFT_RIGHT 10'b0000001110
+// 機能コード
+`define FUNC_NOP  6'b000000
+`define FUNC_ADD  6'b000000
+`define FUNC_SUB  6'b000001
+`define FUNC_AND  6'b000010
+`define FUNC_OR   6'b000011
+`define FUNC_XOR  6'b000100
+`define FUNC_NOR  6'b000101
+`define FUNC_SLTU 6'b000110
+`define FUNC_SLT  6'b000111
+`define FUNC_SLL  6'b001000
+`define FUNC_SLR  6'b001001
+`define FUNC_SAR  6'b001010
+`define FUNC_MUL  6'b001011
+`define FUNC_MULU 6'b001100
+`define FUNC_DIV  6'b001101
+`define FUNC_DIVU 6'b001110
 
 // ロード命令
-`define YUTORINA_OPCODE_LOAD_WORD      6'b000011
-`define YUTORINA_OPCODE_LOAD_HALF_WORD 6'b000111
-`define YUTORINA_OPCODE_LOAD_BYTE      6'b001011
+`define OP_LW  6'b001000
+`define OP_LHU 6'b001001
+`define OP_LBU 6'b001010
+`define OP_LH  6'b001011
+`define OP_LB  6'b001100            
 
 // ストア命令
-`define YUTORINA_OPCODE_STORE_WORD      6'b000010
-`define YUTORINA_OPCODE_STORE_HALF_WORD 6'b000110
-`define YUTORINA_OPCODE_STORE_BYTE      6'b001010
+`define OP_SW 6'b000001
+`define OP_SH 6'b000010
+`define OP_SB 6'b000011
 
 // 算術即値命令
-`define YUTORINA_ARITHMETIC_IMMEDIATE_BIT        31
-`define YutorinaArithmeticImmediateFuncLocale    29:26
-`define YUTORINA_ARITHMETIC_IMMEDIATE_SIGNED_BIT 30
+`define ArithmeticImmLocal       31:29
+`define ARITHMETIC_IMM           2'b010
+`define ArithmeticImmAluOpLocale 28:26
 
-`define YUTORINA_OPCODE_ADD_IMMEDIATE                    6'b110000
-`define YUTORINA_OPCODE_ADDU_IMMEDIATE                   6'b100000
-`define YUTORINA_OPCODE_AND_IMMEDIATE                    6'b100010
-`define YUTORINA_OPCODE_OR_IMMEDIATE                     6'b100011
-`define YUTORINA_OPCODE_XOR_IMMEDIATE                    6'b100100
-`define YUTORINA_OPCODE_LOGICAL_SHIFT_LEFT_IMMEDIATE     6'b100101
-`define YUTORINA_OPCODE_LOGICAL_SHIFT_RIGHT_IMMEDIATE    6'b100110
-`define YUTORINA_OPCODE_SET_LESS_THAN_IMMEDIATE          6'b100111
-`define YUTORINA_OPCODE_ARITHMETIC_SHIFT_LEFT_IMMEDIATE  6'b101101
-`define YUTORINA_OPCODE_ARITHMETIC_SHIFT_RIGHT_IMMEDIATE 6'b101110
+`define OP_ADDI  6'b010000
+`define OP_ADDIU 6'b011000
+`define OP_ANDI  6'b010010
+`define OP_ORI   6'b010011
+`define OP_XORI  6'b010100
+`define OP_SLTIU 6'b010110
+`define OP_SLTI  6'b011111
+`define OP_ADDUI 6'b110000
 
 // 分岐命令
-`define YUTORINA_OPCODE_BRANCH_EQUAL     6'b010000
-`define YUTORINA_OPCODE_BRANCH_NOT_EQUAL 6'b010001
-`define YUTORINA_OPCODE_JUMP             6'b010010
-`define YUTORINA_OPCODE_CALL             6'b010011
-`define YUTORINA_OPCODE_JUMP_REGISTER    6'b010100
-`define YUTORINA_OPCODE_CALL_REGISTER    6'b010101
+// 比較命令
+`define OP_BEQ 6'b100000
+`define OP_BNE 6'b101000
+// 飛翔命令
+`define OP_JMP  6'b000100
+`define OP_CALL 6'b000101
+// 飛翔レジスタ命令
+`define OP_JMPR  6'b000110
+`define OP_CALLR 6'b000111
 
 // 特殊命令
-`define YUTORINA_OPCODE_TRAP 6'b001100
+`define OP_TRAP 6'b001101
 
 // 特權命令
-`define YUTORINA_OPCODE_READ_CONTROL_REGISTER  6'b111011
-`define YUTPRINA_OPCODE_WRITE_CONTROL_REGISTER 6'b111010
-`define YUTORINA_OPCODE_EXCEPTION_RETURN       6'b111100
+`define OP_LCR  6'b111101
+`define OP_SCR  6'b111110
+`define OP_ERET 6'b111111
 
 // ALUオプコード
-`define YutorinaALUOpcodeBus    3:0
-`define YUTORINA_ALU_SIGNED_BIT 3
+`define AluOpBus    4:0
+`define AluOpLocale 4:0
 
-`define YUTORINA_ALU_OPCODE_ADD         3'b000
-`define YUTORINA_ALU_OPCODE_SUB         3'b001
-`define YUTORINA_ALU_OPCODE_AND         3'b010
-`define YUTORINA_ALU_OPCODE_OR          3'b011
-`define YUTORINA_ALU_OPCODE_XOR         3'b100
-`define YUTORINA_ALU_OPCODE_LEFT_SHIFT  3'b101
-`define YUTORINA_ALU_OPCODE_RIGHT_SHIFT 3'b110
+`define ALU_OP_ADD  4'b0000
+`define ALU_OP_SUB  4'b0001
+`define ALU_OP_AND  4'b0010
+`define ALU_OP_OR   4'b0011
+`define ALU_OP_XOR  4'b0100
+`define ALU_OP_NOR  4'b0101
+`define ALU_OP_SLTU 4'b0110
+`define ALU_OP_SLT  4'b0111
+`define ALU_OP_SLL  4'b1000
+`define ALU_OP_SLR  4'b1001
+`define ALU_OP_SAR  4'b1010
+`define ALU_OP_MUL  4'b1011
+`define ALU_OP_MULU 4'b1100
+`define ALU_OP_DIV  4'b1101
+`define ALU_OP_DIVU 4'b1110
 
 `endif

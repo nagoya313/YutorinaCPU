@@ -1,36 +1,36 @@
 `ifndef __YUTORINA_STDDEF_H__
 `define __YUTORINA_STDDEF_H__
 
-`define YUTORINA_HIGH 1'b1
-`define YUTORINA_LOW  1'b0
+`define HIGH 1'b1
+`define LOW  1'b0
 
-`define YUTORINA_DISABLE  1'b0
-`define YUTORINA_ENABLE   1'b1
-`define YUTORINA_DISABLE_ 1'b1
-`define YUTORINA_ENABLE_  1'b0
+`define DISABLE  1'b0
+`define ENABLE   1'b1
+`define DISABLE_ 1'b1
+`define ENABLE_  1'b0
 
-`define YUTORINA_READ  1'b1
-`define YUTORINA_WRITE 1'b0
+`define READ  1'b1
+`define WRITE 1'b0
 
-`define YUTORINA_LSB             0
-`define YUTORINA_BYTE_DATA_WIDTH 8
-`define YUTORINA_BYTE_MSB        7
-`define YutorinaByteDataBus      7:0
+// バイト
+`define LSB         0
+`define BYTE_DATA_W 8
+`define BYTE_MSB    7
+`define ByteDataBus 7:0
 
-`define YUTORINA_WORD_DATA_WIDTH 32
-`define YUTORINA_WORD_MSB        31
-`define YutorinaWordDataBus      31:0
+// ワード
+`define WORD_DATA_W 32
+`define WORD_MSB    31
+`define WordDataBus 31:0
 
-`define YUTORINA_WORD_ADDRESS_WIDTH 30
-`define YUTORINA_WORD_ADDRESS_MSB   29
-`define YutorinaWordAddressBus      29:0
-
-`define YUTORINA_BYTE_OFFSET_WIDTH 2
-`define YutorinaByteOffsetBus      1:0
-
-`define YutorinaWordAddressLocale 31:2
-`define YutorinaByteOffsetLocale  1:0
-
-`define YUTORINA_BYTE_OFFSET_WORD 2'b00
+// アドレス
+`define WORD_ADDR_W      30
+`define WORD_ADDR_MSB    29
+`define WordAddrBus      29:0
+`define BYTE_OFFSET_W    2
+`define ByteOffsetBus    1:0
+`define WordAddrLocale   31:2
+`define ByteOffsetLocale 1:0
+`define BYTE_OFFSET_WORD 2'b00
 
 `endif

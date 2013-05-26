@@ -4,110 +4,94 @@
 
 `include "bus.h"
 
-module yutorina_bus(input wire clock, input wire reset,
-                    output wire [`YutorinaWordDataBus] master_read_data,
-                    output wire master_ready_,
-                    input wire master0_request_, 
-                    input wire [`YutorinaWordAddressBus] master0_address,
-                    input wire master0_address_strobe_,
-                    input wire master0_read_write,
-                    input wire [`YutorinaWordDataBus] master0_write_data,
-                    output wire master0_grant_,
-                    input wire master1_request_, 
-                    input wire [`YutorinaWordAddressBus] master1_address,
-                    input wire master1_address_strobe_,
-                    input wire master1_read_write,
-                    input wire [`YutorinaWordDataBus] master1_write_data,
-                    output wire master1_grant_,
-                    input wire master2_request_, 
-                    input wire [`YutorinaWordAddressBus] master2_address,
-                    input wire master2_address_strobe_,
-                    input wire master2_read_write,
-                    input wire [`YutorinaWordDataBus] master2_write_data,
-                    output wire master2_grant_,
-                    input wire master3_request_, 
-                    input wire [`YutorinaWordAddressBus] master3_address,
-                    input wire master3_address_strobe_,
-                    input wire master3_read_write,
-                    input wire [`YutorinaWordDataBus] master3_write_data,
-                    output wire master3_grant_,
-                    output wire [`YutorinaWordAddressBus] slave_address,
-                    output wire slave_address_strobe_,
-                    output wire slave_read_write,
-                    output wire [`YutorinaWordDataBus] slave_write_data,
-                    input wire [`YutorinaWordDataBus] slave0_read_data,
-                    input wire slave0_ready_, output wire slave0_chip_select_,
-                    input wire [`YutorinaWordDataBus] slave1_read_data,
-                    input wire slave1_ready_, output wire slave1_chip_select_,
-                    input wire [`YutorinaWordDataBus] slave2_read_data,
-                    input wire slave2_ready_, output wire slave2_chip_select_,
-                    input wire [`YutorinaWordDataBus] slave3_read_data,
-                    input wire slave3_ready_, output wire slave3_chip_select_,
-                    input wire [`YutorinaWordDataBus] slave4_read_data,
-                    input wire slave4_ready_, output wire slave4_chip_select_,
-                    input wire [`YutorinaWordDataBus] slave5_read_data,
-                    input wire slave5_ready_, output wire slave5_chip_select_,
-                    input wire [`YutorinaWordDataBus] slave6_read_data,
-                    input wire slave6_ready_, output wire slave6_chip_select_,
-                    input wire [`YutorinaWordDataBus] slave7_read_data,
-                    input wire slave7_ready_, output wire slave7_chip_select_);
-  yutorina_bus_arbiter bus_arbiter(
-    .clock (clock), .reset (reset),
-    .master0_request_ (master0_request_), .master0_grant_ (master0_grant_),
-    .master1_request_ (master1_request_), .master1_grant_ (master1_grant_),
-    .master2_request_ (master2_request_), .master2_grant_ (master2_grant_),
-    .master3_request_ (master3_request_), .master3_grant_ (master3_grant_));
-  yutorina_bus_master_multiplexer bus_master_multiplexer(
-    .master0_address (master0_address), 
-    .master0_address_strobe_ (master0_address_strobe_),
-    .master0_read_write (master0_read_write),
-    .master0_write_data (master0_write_data),
-    .master0_grant_ (master0_grant_),
-    .master1_address (master1_address), 
-    .master1_address_strobe_ (master1_address_strobe_),
-    .master1_read_write (master1_read_write),
-    .master1_write_data (master1_write_data),
-    .master1_grant_ (master1_grant_),
-    .master2_address (master1_address), 
-    .master2_address_strobe_ (master2_address_strobe_),
-    .master2_read_write (master2_read_write),
-    .master2_write_data (master2_write_data),
-    .master2_grant_ (master2_grant_),
-    .master3_address (master3_address), 
-    .master3_address_strobe_ (master3_address_strobe_),
-    .master3_read_write (master3_read_write),
-    .master3_write_data (master3_write_data),
-    .master3_grant_ (master3_grant_),
-    .slave_address (slave_address),
-    .slave_address_strobe_ (slave_address_strobe_),
-    .slave_read_write (slave_read_write),
-    .slave_write_data (slave_write_data));
-  yutorina_bus_address_decoder bus_address_decoder(
-    .slave_address (slave_address),
-    .slave0_chip_select_ (slave0_chip_select_),
-    .slave1_chip_select_ (slave1_chip_select_),
-    .slave2_chip_select_ (slave2_chip_select_),
-    .slave3_chip_select_ (slave3_chip_select_),
-    .slave4_chip_select_ (slave4_chip_select_),
-    .slave5_chip_select_ (slave5_chip_select_),
-    .slave6_chip_select_ (slave6_chip_select_),
-    .slave7_chip_select_ (slave7_chip_select_));
-  yutorina_bus_slave_multiplexer bus_slave_multiplexer(
-    .slave0_chip_select_ (slave0_chip_select_), 
-    .slave1_chip_select_ (slave1_chip_select_),
-    .slave2_chip_select_ (slave2_chip_select_),
-    .slave3_chip_select_ (slave3_chip_select_),
-    .slave4_chip_select_ (slave4_chip_select_),
-    .slave5_chip_select_ (slave5_chip_select_),
-    .slave6_chip_select_ (slave6_chip_select_),
-    .slave7_chip_select_ (slave7_chip_select_),
-    .slave0_read_data (slave0_read_data), .slave0_ready_ (slave0_ready_),
-    .slave1_read_data (slave1_read_data), .slave1_ready_ (slave1_ready_),
-    .slave2_read_data (slave2_read_data), .slave2_ready_ (slave2_ready_),
-    .slave3_read_data (slave3_read_data), .slave3_ready_ (slave3_ready_),
-    .slave4_read_data (slave4_read_data), .slave4_ready_ (slave4_ready_),
-    .slave5_read_data (slave5_read_data), .slave5_ready_ (slave5_ready_),
-    .slave6_read_data (slave6_read_data), .slave6_ready_ (slave6_ready_),
-    .slave7_read_data (slave7_read_data), .slave7_ready_ (slave7_ready_),
-    .master_read_data (master_read_data), .master_ready_(master_ready_));
+`timescale 1ns/1ps
+
+module yutorina_bus(input wire clk, input wire rst,
+                    // マスタ共通
+                    output wire [`WordDataBus] m_rd_data,
+                    output wire m_rdy_,
+                    // マスタ0
+                    input wire m0_req_, input wire [`WordAddrBus] m0_addr,
+                    input wire m0_as_, input wire m0_rw,
+                    input wire [`WordDataBus] m0_wr_data, output wire m0_grnt_,
+                    // マスタ1
+                    input wire m1_req_, input wire [`WordAddrBus] m1_addr,
+                    input wire m1_as_, input wire m1_rw,
+                    input wire [`WordDataBus] m1_wr_data, output wire m1_grnt_,
+                    // マスタ2
+                    input wire m2_req_, input wire [`WordAddrBus] m2_addr,
+                    input wire m2_as_, input wire m2_rw,
+                    input wire [`WordDataBus] m2_wr_data, output wire m2_grnt_,
+                    // マスタ3
+                    input wire m3_req_, input wire [`WordAddrBus] m3_addr,
+                    input wire m3_as_, input wire m3_rw,
+                    input wire [`WordDataBus] m3_wr_data, output wire m3_grnt_,
+                    // 奴隷共通
+                    output wire [`WordAddrBus] s_addr, output wire s_as_,
+                    output wire s_rw, output wire [`WordDataBus] s_wr_data,
+                    // 奴隷0
+                    input wire [`WordDataBus] s0_rd_data,
+                    input wire s0_rdy_, output wire s0_cs_,
+                    // 奴隷1
+                    input wire [`WordDataBus] s1_rd_data,
+                    input wire s1_rdy_, output wire s1_cs_,
+                    // 奴隷2
+                    input wire [`WordDataBus] s2_rd_data,
+                    input wire s2_rdy_, output wire s2_cs_,
+                    // 奴隷3
+                    input wire [`WordDataBus] s3_rd_data,
+                    input wire s3_rdy_, output wire s3_cs_,
+                    // 奴隷4
+                    input wire [`WordDataBus] s4_rd_data,
+                    input wire s4_rdy_, output wire s4_cs_,
+                    // 奴隷5
+                    input wire [`WordDataBus] s5_rd_data,
+                    input wire s5_rdy_, output wire s5_cs_,
+                    // 奴隷6
+                    input wire [`WordDataBus] s6_rd_data,
+                    input wire s6_rdy_, output wire s6_cs_,
+                    // 奴隷7
+                    input wire [`WordDataBus] s7_rd_data,
+                    input wire s7_rdy_, output wire s7_cs_);
+  // バス權調停
+  yutorina_bus_arbiter bus_arbiter(.clk (clk), .rst (rst),
+                                   .m0_req_ (m0_req_), .m0_grnt_ (m0_grnt_),
+                                   .m1_req_ (m1_req_), .m1_grnt_ (m1_grnt_),
+                                   .m2_req_ (m2_req_), .m2_grnt_ (m2_grnt_),
+                                   .m3_req_ (m3_req_), .m3_grnt_ (m3_grnt_));
+  // バス權を持つてゐるマスタを選擇
+  yutorina_bus_master_mux bus_master_mux(
+    // マスタ0
+    .m0_addr (m0_addr), .m0_as_ (m0_as_), .m0_rw (m0_rw),
+    .m0_wr_data (m0_wr_data), .m0_grnt_ (m0_grnt_),
+    // マスタ1
+    .m1_addr (m1_addr), .m1_as_ (m1_as_), .m1_rw (m1_rw),
+    .m1_wr_data (m1_wr_data), .m1_grnt_ (m1_grnt_),
+    // マスタ2
+    .m2_addr (m2_addr), .m2_as_ (m2_as_), .m2_rw (m2_rw),
+    .m2_wr_data (m2_wr_data), .m2_grnt_ (m2_grnt_),
+    // マスタ3
+    .m3_addr (m3_addr), .m3_as_ (m3_as_), .m3_rw (m3_rw),
+    .m3_wr_data (m3_wr_data), .m3_grnt_ (m3_grnt_),
+    // 奴隷出力
+    .s_addr (s_addr), .s_as_ (s_as_), .s_rw (s_rw), .s_wr_data (s_wr_data));
+  // 奴隷番地からマスタがアクセスする奴隷を選擇
+  yutorina_bus_addr_dec bus_addr_dec(
+    .s_addr (s_addr),
+    .s0_cs_ (s0_cs_), .s1_cs_ (s1_cs_), .s2_cs_ (s2_cs_), .s3_cs_ (s3_cs_),
+    .s4_cs_ (s4_cs_), .s5_cs_ (s5_cs_), .s6_cs_ (s6_cs_), .s7_cs_ (s7_cs_));
+  // 選擇された奴隷が情報をバスに出す
+  yutorina_bus_slave_mux bus_slave_mux(
+    .s0_cs_ (s0_cs_), .s1_cs_ (s1_cs_), .s2_cs_ (s2_cs_), .s3_cs_ (s3_cs_),
+    .s4_cs_ (s4_cs_), .s5_cs_ (s5_cs_), .s6_cs_ (s6_cs_), .s7_cs_ (s7_cs_),
+    .s0_rd_data (s0_rd_data), .s0_rdy_ (s0_rdy_),
+    .s1_rd_data (s1_rd_data), .s1_rdy_ (s1_rdy_),
+    .s2_rd_data (s2_rd_data), .s2_rdy_ (s2_rdy_),
+    .s3_rd_data (s3_rd_data), .s3_rdy_ (s3_rdy_),
+    .s4_rd_data (s4_rd_data), .s4_rdy_ (s4_rdy_),
+    .s5_rd_data (s5_rd_data), .s5_rdy_ (s5_rdy_),
+    .s6_rd_data (s6_rd_data), .s6_rdy_ (s6_rdy_),
+    .s7_rd_data (s7_rd_data), .s7_rdy_ (s7_rdy_),
+    // バス權持つてゐるマスタ
+    .m_rd_data (m_rd_data), .m_rdy_(m_rdy_));
 endmodule

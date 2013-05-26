@@ -1,44 +1,36 @@
 `ifndef __YUTORINA_GLOBAL_CONFIG_H__
 `define __YUTORINA_GLOBAL_CONFIG_H__
 
-`define YUTORINA_POSITIVE_RESET
+// リセット信號の極性
+//`define YUTORINA_POSITIVE_RESET
 `define YUTORINA_NEGATIVE_RESET
 
+// メモリ制禦信號の極性
 `define YUTORINA_POSITIVE_MEMORY
-`define YUTORINA_NEGATIVE_MEMORY
+//`define YUTORINA_NEGATIVE_MEMORY
 
+// 實裝I/O
 `define YUTORINA_IMPLEMENT_TIMER
 `define YUTORINA_IMPLEMENT_UART
 `define YUTORINA_IMPLEMENT_GPIO
 
+// 設定
 `ifdef YUTORINA_POSITIVE_RESET
-`define YUTORINA_RESET_EDGE posedge
+`define RESET_EDGE posedge
+`define RESET_ENABLE 1'b1
+`define RESET_DISABLE 1'b0
 `else
-`define YUTORINA_RESET_EDGE negedge
-`endif
-
-`ifdef YUTORINA_POSITIVE_RESET
-`define YUTORINA_RESET_ENABLE 1'b1
-`else
-`define YUTORINA_RESET_ENABLE 1'b0
-`endif
-
-`ifdef YUTORINA_POSITIVE_RESET
-`define YUTORINA_RESET_DISABLE 1'b0
-`else
-`define YUTORINA_RESET_DISABLE 1'b1
+`define RESET_EDGE negedge
+`define RESET_ENABLE 1'b0
+`define RESET_DISABLE 1'b1
 `endif
 
 `ifdef YUTORINA_POSITIVE_MEMORY
-`define YUTORINA_MEM_ENABLE 1'b1
+`define MEM_ENABLE 1'b1
+`define MEM_DISABLE 1'b0
 `else
-`define YUTORINA_MEM_ENABLE 1'b0
-`endif
-
-`ifdef YUTORINA_POSITIVE_MEMORY
-`define YUTORINA_MEM_DISABLE 1'b0
-`else
-`define YUTORINA_MEM_DISABLE 1'b1
+`define MEM_ENABLE 1'b0
+`define MEM_DISABLE 1'b1
 `endif
 
 `endif

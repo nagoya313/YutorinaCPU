@@ -1,4 +1,3 @@
 #!/bin/bash
 
-iverilog bus/*.v cpu/*.v -Iinclude -Ibus/include -Icpu/include
-vvp a.out
+iverilog bus/rtl/*.v cpu/rtl/*.v io/*/rtl/*.v top/rtl/*.v lib/*.v test/*.v -Iinclude -Ibus/include -Icpu/include -Iio/rom/include
