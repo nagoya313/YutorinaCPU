@@ -3,14 +3,16 @@
 
 `define ISA_NOP 32'b0
 
+`define JPcLocale 29:24
+
 // オペコード
 `define OpBus    5:0
 `define OpLocale 31:26
 
 // レジスタ
-`define DRegLocale 25:21
-`define LRegLocale 20:16
-`define RRegLocale 15:11
+`define RaLocale 25:21
+`define RbLocale 20:16
+`define RcLocale 15:11
 
 // 即値
 `define ImmBus     15:0
@@ -57,17 +59,13 @@
 `define OP_SB 6'b000011
 
 // 算術即値命令
-`define ArithmeticImmLocal       31:29
-`define ARITHMETIC_IMM           2'b010
-`define ArithmeticImmAluOpLocale 28:26
-
-`define OP_ADDI  6'b010000
-`define OP_ADDIU 6'b011000
+`define OP_ADDIU 6'b010000
 `define OP_ANDI  6'b010010
 `define OP_ORI   6'b010011
 `define OP_XORI  6'b010100
-`define OP_SLTIU 6'b010110
+`define OP_SLTUI 6'b010110
 `define OP_SLTI  6'b011111
+`define OP_ADDI  6'b011000
 `define OP_ADDUI 6'b110000
 
 // 分岐命令
@@ -79,20 +77,31 @@
 `define OP_CALL 6'b000101
 // 飛翔レジスタ命令
 `define OP_JMPR  6'b000110
-`define OP_CALLR 6'b000111
+
+// 機能コード
+`define FUNC_JMP  6'b000000
+`define FUNC_CALL 6'b000001
 
 // 特殊命令
-`define OP_TRAP 6'b001101
+`define OP_SP 6'b111110
+
+// 機能コード
+`define FUNC_TRAP 6'b000000
+`define FUNC_RET  6'b000001
 
 // 特權命令
-`define OP_LCR  6'b111101
-`define OP_SCR  6'b111110
-`define OP_ERET 6'b111111
+`define OP_KER 6'b111111
+
+// 機能コード
+`define FUNC_LSR  6'b000010
+`define FUNC_SSR  6'b000001
+`define FUNC_ERET 6'b000000
 
 // ALUオプコード
 `define AluOpBus    4:0
 `define AluOpLocale 4:0
 
+`define ALU_OP_NOP  4'b0000
 `define ALU_OP_ADD  4'b0000
 `define ALU_OP_SUB  4'b0001
 `define ALU_OP_AND  4'b0010

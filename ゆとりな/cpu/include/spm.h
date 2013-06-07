@@ -7,4 +7,6 @@
 `define SpmAddrBus    11:0
 `define SpmAddrLocale 11:0
 
+`define SpmSelectLocale 26
+
 `endif

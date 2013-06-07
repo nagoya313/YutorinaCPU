@@ -1,16 +1,14 @@
 `ifndef __YUTORINA_BUS_H__
 `define __YUTORINA_BUS_H__
 
-// マスタ關聯
 `define BUS_MASTER_CH      4
 `define BUS_MASTER_INDEX_W 2
-`define BusOwnerBus        1:0
-`define BUS_OWNER_MASTER_0 2'h0
-`define BUS_OWNER_MASTER_1 2'h1
-`define BUS_OWNER_MASTER_2 2'h2
-`define BUS_OWNER_MASTER_3 2'h3
+`define BusMasterBus       1:0
+`define BUS_MASTER_0       2'h0
+`define BUS_MASTER_1       2'h1
+`define BUS_MASTER_2       2'h2
+`define BUS_MASTER_3       2'h3
 
-// 奴隷關聯
 `define SLAVE_CH            8
 `define SLAVE_INDEX_W       3
 `define BusSlaveIndexBus    2:0

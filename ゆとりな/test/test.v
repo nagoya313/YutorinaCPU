@@ -1,21 +1,17 @@
 `include "nettype.h"
 `include "global_config.h"
 `include "stddef.h"
-
-`timescale 1ns/1ps
+`include "timescale.h"
 
 module cpu_tset();
   reg clk;
   reg rst;
-  // 10MHz
   parameter STEP = 100.0000;
   
-  // クロック
   always #(STEP / 2) begin
     clk <= ~clk;
   end
   
-  // ゆとりなちやん！
   yutorina_chip_top top(.clk_ref (clk), .rst_sw (rst));
   
   initial begin
@@ -35,7 +31,6 @@ module cpu_tset();
     end
   end
   
-  // 波形
   initial begin
     $dumpfile("yutorina.vcd");
     $dumpvars(0, top);
