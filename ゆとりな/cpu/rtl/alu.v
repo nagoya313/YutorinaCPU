@@ -19,27 +19,27 @@ module yutorina_alu(
       s_lhs = $signed(lhs);
       s_rhs = $signed(rhs);
       case (op)
-        `ALU_OP_ADD: begin
+        `ALU_ADD: begin
           alu = lhs + rhs;
-        end `ALU_OP_SUB: begin
+        end `ALU_SUB: begin
           alu = lhs - rhs;
-        end `ALU_OP_AND: begin
+        end `ALU_AND: begin
           alu = lhs & rhs;
-        end `ALU_OP_OR: begin
+        end `ALU_OR: begin
           alu = lhs | rhs;
-        end `ALU_OP_XOR: begin
+        end `ALU_XOR: begin
           alu = lhs ^ rhs;
-        end `ALU_OP_NOR: begin
+        end `ALU_NOR: begin
           alu = !(lhs | rhs);
-        end `ALU_OP_SLTU: begin
+        end `ALU_SLTU: begin
           alu = lhs < rhs ? `ONE : `ZERO;
-        end `ALU_OP_SLT: begin
+        end `ALU_SLT: begin
           alu = s_lhs < s_rhs ? `ONE : `ZERO;
-        end `ALU_OP_SLL: begin
+        end `ALU_SLL: begin
           alu = lhs << rhs;
-        end `ALU_OP_SLR: begin
+        end `ALU_SLR: begin
           alu = lhs >> rhs;
-        end `ALU_OP_SAR: begin
+        end `ALU_SAR: begin
           alu = s_lhs >>> s_rhs;
         end
       endcase
