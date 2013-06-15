@@ -1,1 +1,6 @@
 *.out
+*.vcd
+*.dat
+*.asm
+yutorina-as
+*.ods
