@@ -10,6 +10,7 @@
 `define SPR_ADDR_W 5
 `define SprAddrBus 4:0
 
+`define SPR_ZERO        5'h0
 `define SPR_PC          5'h0
 `define SPR_EPC         5'h1
 `define SPR_CNT_L       5'h2

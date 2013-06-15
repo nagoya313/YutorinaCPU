@@ -12,16 +12,16 @@ module yutorina_id_stage(
   input wire clk, input wire rst, input wire stall, input wire mode,
   input wire [`GprAddrBus] ex_fwd_addr, input wire [`WordDataBus] ex_fwd_out,
   input wire [`GprAddrBus] mem_fwd_addr, input wire [`WordDataBus] mem_fwd_out,
-  input wire [`WordDataBus] gpr_r_data1,
-  input wire [`WordDataBus] gpr_r_data2,
-  output wire [`GprAddrBus] gpr_r_addr1,
-  output wire [`GprAddrBus] gpr_r_addr2,
+  input wire [`WordDataBus] gpr_r_data1, input wire [`WordDataBus] gpr_r_data2,
+  output wire [`GprAddrBus] gpr_r_addr1, output wire [`GprAddrBus] gpr_r_addr2,
+  input wire [`WordDataBus] spr_r_data, output wire [`WordDataBus] spr_w_data,
   output wire br_taken, output wire [`WordAddrBus] br_addr,
   input wire if_en_, input wire [`WordAddrBus] if_pc,
   input wire [`WordDataBus] if_insn,
   output reg id_en_, output reg [`AluOpBus] id_alu_op,
   output reg [`WordDataBus] id_alu_lhs, output reg [`WordDataBus] id_alu_rhs,
   output reg [`GprAddrBus] id_w_addr, output reg [`WordDataBus] id_w_data,
+  output wire [`SprAddrBus] spr_addr, output wire spr_rw,
   output reg id_gpr_we_, output reg [`ExpBus] id_exp_code,
   output reg [`MemOpBus] id_mem_op, output reg [`CtrlOpBus] id_ctrl_op);
   wire [`AluOpBus] alu_op;
@@ -39,12 +39,16 @@ module yutorina_id_stage(
   wire [`WordDataBus] r_data2
     = gpr_r_addr2 == mem_fwd_addr ? mem_fwd_out :
       gpr_r_addr2 == ex_fwd_addr ? ex_fwd_out : gpr_r_data2;
+  assign spr_rw = ctrl_op == `CTRL_SSR ? `WRITE : `READ;
+  assign spr_addr = ctrl_op == `CTRL_LSR ? gpr_r_addr1 :
+                    ctrl_op == `CTRL_SSR ? w_addr : `SPR_ZERO;
+  assign spr_w_data = w_data;
   yutorina_insn_dec insn_dec(
     .mode (mode), .if_insn (if_insn), .if_pc (if_pc),
     .alu_op (alu_op), .alu_lhs (alu_lhs), .alu_rhs (alu_rhs),
     .gpr_r_data1 (r_data1), .gpr_r_data2 (r_data2),
     .gpr_r_addr1 (gpr_r_addr1), .gpr_r_addr2 (gpr_r_addr2),
-    .w_addr (w_addr), .w_data (w_data),
+    .spr_r_data (spr_r_data), .w_addr (w_addr), .w_data (w_data),
     .br_taken (br_taken), .br_addr (br_addr), .gpr_we_ (gpr_we_),
     .mem_op (mem_op), .ctrl_op (ctrl_op), .exp_code (exp_code));
   always @(posedge clk or `RESET_EDGE rst) begin

@@ -18,6 +18,7 @@ module yutorina_insn_dec(
   output wire [`WordDataBus] alu_lhs, output wire [`WordDataBus] alu_rhs,
   input wire [`WordDataBus] gpr_r_data1, input wire [`WordDataBus] gpr_r_data2,
   output wire [`GprAddrBus] gpr_r_addr1, output wire [`GprAddrBus] gpr_r_addr2,
+  input wire [`WordDataBus] spr_r_data,
   output wire [`GprAddrBus] w_addr, output wire [`WordDataBus] w_data,
   output wire br_taken, output wire [`WordAddrBus] br_addr,
   output wire gpr_we_, output wire [`ExpBus] exp_code,
@@ -28,6 +29,7 @@ module yutorina_insn_dec(
     input [`WordAddrBus] pc;
     input [`WordDataBus] gpr_r_data1;
     input [`WordDataBus] gpr_r_data2;
+    input [`WordDataBus] spr_r_data;
     reg [`OpBus] op;
     reg [`AluOpBus] alu;
     reg [`FuncBus] func;
@@ -43,6 +45,7 @@ module yutorina_insn_dec(
     reg [`JImmBus] j_imm;
     reg [`ShamtBus] shamt;
     reg [`InsnBus] err;
+    reg [`InsnBus] prv_err;
     reg [`WordAddrBus] b_addr;
     reg [`WordAddrBus] j_addr;
     begin
@@ -63,6 +66,9 @@ module yutorina_insn_dec(
       err     =  {`ALU_NOP, `ZERO, `ZERO, `ZERO,
                   `GPR_ZERO, `GPR_ZERO, `GPR_ZERO, `FALSE, `NULL,
                   `DISABLE_, `MEM_NONE, `CTRL_NONE, `EXP_INVALID_INSN};
+      prv_err =  {`ALU_NOP, `ZERO, `ZERO, `ZERO,
+                  `GPR_ZERO, `GPR_ZERO, `GPR_ZERO, `FALSE, `NULL,
+                  `DISABLE_, `MEM_NONE, `CTRL_NONE, `EXP_PRV_INSN};
       b_addr = pc + s_imm32;
       j_addr  = {pc[`JLocale], j_imm};
       case (op)
@@ -282,13 +288,11 @@ module yutorina_insn_dec(
           case (func)
             `FUNC_LSR: begin
               if (mod == `MODE_KERNEL) begin
-                insn_dec = {`ALU_NOP, `ZERO, `ZERO, `ZERO,
+                insn_dec = {`ALU_NOP, spr_r_data, `ZERO, `ZERO,
                             rb, `GPR_ZERO, ra, `FALSE, `NULL,
                             `ENABLE_, `MEM_NONE, `CTRL_LSR, `EXP_NONE};
               end else begin
-                insn_dec = {`ALU_NOP, `ZERO, `ZERO, `ZERO,
-                            `GPR_ZERO, `GPR_ZERO, `GPR_ZERO, `FALSE, `NULL,
-                            `DISABLE_, `MEM_NONE, `CTRL_NONE, `EXP_PRV_INSN};
+                insn_dec = prv_err;
               end
             end `FUNC_SSR: begin
               if (mod == `MODE_KERNEL) begin
@@ -296,9 +300,7 @@ module yutorina_insn_dec(
                             ra, `GPR_ZERO, rb, `FALSE, `NULL,
                             `DISABLE_, `MEM_NONE, `CTRL_SSR, `EXP_NONE};
               end else begin
-                insn_dec = {`ALU_NOP, `ZERO, `ZERO, `ZERO,
-                            `GPR_ZERO, `GPR_ZERO, `GPR_ZERO, `FALSE, `NULL,
-                            `DISABLE_, `MEM_NONE, `CTRL_NONE, `EXP_PRV_INSN};
+                insn_dec = prv_err;
               end
             end `FUNC_ERET: begin
               if (mod == `MODE_KERNEL) begin
@@ -306,9 +308,7 @@ module yutorina_insn_dec(
                             `GPR_ZERO, `GPR_ZERO, `GPR_ZERO, `TRUE, `NULL,
                             `DISABLE_, `MEM_NONE, `CTRL_NONE, `EXP_NONE};
               end else begin
-                insn_dec = {`ALU_NOP, `ZERO, `ZERO, `ZERO,
-                            `GPR_ZERO, `GPR_ZERO, `GPR_ZERO, `FALSE, `NULL,
-                            `DISABLE_, `MEM_NONE, `CTRL_NONE, `EXP_PRV_INSN};
+                insn_dec = prv_err;
               end
             end default: begin
               insn_dec = err;
@@ -322,5 +322,6 @@ module yutorina_insn_dec(
   endfunction
   assign {alu_op, alu_lhs, alu_rhs, w_data, gpr_r_addr1, gpr_r_addr2,
           w_addr, br_taken, br_addr, gpr_we_, mem_op, ctrl_op, exp_code}
-            = insn_dec(mode, if_insn, if_pc, gpr_r_data1, gpr_r_data2);
+            = insn_dec(mode, if_insn, if_pc,
+                       gpr_r_data1, gpr_r_data2, spr_r_data);
 endmodule

@@ -18,7 +18,7 @@ module yutorina_cpu(
   output wire [`WordAddrBus] d_addr, output wire d_as_, output d_rw,
   output wire [`WordDataBus] d_w_data, input wire d_grnt_);
   wire stall = i_busy | d_busy;
-  wire mode;
+  wire mode = `MODE_KERNEL;
   wire i_busy;
   wire d_busy;
   wire br_taken;
@@ -67,7 +67,11 @@ module yutorina_cpu(
   wire [`GprAddrBus] gpr_r_addr2;
   wire [`WordDataBus] gpr_r_data1;
   wire [`WordDataBus] gpr_r_data2;
-  wire gpr_we_ = `DISABLE_;
+  wire gpr_we_;
+  wire [`SprAddrBus] spr_addr;
+  wire [`WordDataBus] spr_r_data;
+  wire [`WordDataBus] spr_w_data;
+  wire spr_rw;
   yutorina_if_stage if_stage(
     .clk (clk), .rst (rst), .stall (stall), .busy (i_busy),
     .br_taken (br_taken), .br_addr (br_addr),
@@ -82,11 +86,13 @@ module yutorina_cpu(
     .mem_fwd_out (mem_fwd_out), .mem_fwd_addr (mem_fwd_addr),
     .gpr_r_data1 (gpr_r_data1), .gpr_r_data2 (gpr_r_data2),
     .gpr_r_addr1 (gpr_r_addr1), .gpr_r_addr2 (gpr_r_addr2),
+    .spr_r_data (spr_r_data), .spr_w_data (spr_w_data),
     .br_taken (br_taken), .br_addr (br_addr),
     .if_en_ (if_en_), .if_pc (if_pc), .if_insn (if_insn),
     .id_en_ (id_en_), .id_alu_op (id_alu_op),
     .id_alu_lhs (id_alu_lhs), .id_alu_rhs (id_alu_rhs),
     .id_w_addr (id_w_addr), .id_w_data (id_w_data), .id_gpr_we_ (id_gpr_we_),
+    .spr_addr (spr_addr), .spr_rw (spr_rw),
     .id_mem_op (id_mem_op), .id_ctrl_op (id_ctrl_op),
     .id_exp_code (id_exp_code));
   yutorina_ex_stage ex_stage(
@@ -123,4 +129,7 @@ module yutorina_cpu(
     .r_addr1 (gpr_r_addr1), .r_data1 (gpr_r_data1),
     .r_addr2 (gpr_r_addr2), .r_data2 (gpr_r_data2),
     .we_ (mem_gpr_we_), .w_addr (mem_w_addr), .w_data (mem_out));
+  yutorina_spr spr(
+    .clk (clk), .rst (rst), .stall (stall), .addr (spr_addr), .wr (spr_rw),
+    .r_data (spr_r_data), .w_data (spr_w_data));
 endmodule

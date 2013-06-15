@@ -21,10 +21,10 @@ module yutorina_ex_stage(
   output reg [`WordDataBus] ex_out,
   output wire [`GprAddrBus] fwd_addr, output wire [`WordDataBus] fwd_out);
   wire [`WordDataBus] alu_out;
-  yutorina_alu alu(.op (id_alu_op), 
-                   .lhs (id_alu_lhs), .rhs (id_alu_rhs), .out (alu_out));
   assign fwd_out = alu_out;
   assign fwd_addr = id_w_addr;
+  yutorina_alu alu(.op (id_alu_op), 
+                   .lhs (id_alu_lhs), .rhs (id_alu_rhs), .out (alu_out));
   always @(posedge clk or `RESET_EDGE rst) begin
     if (rst == `RESET_ENABLE) begin
       ex_en_      <= #1 `DISABLE_;
