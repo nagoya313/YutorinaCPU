@@ -8,7 +8,7 @@
 `include "gpr.h"
 
 module yutorina_ex_stage(
-  input wire clk, input wire rst, input wire stall,
+  input wire clk, input wire rst, input wire stall, input wire flush,
   input wire id_en_, input wire [`AluOpBus] id_alu_op,
   input wire [`WordDataBus] id_alu_lhs, input wire [`WordDataBus] id_alu_rhs,
   input wire [`GprAddrBus] id_w_addr, input wire [`WordDataBus] id_w_data,
@@ -36,8 +36,16 @@ module yutorina_ex_stage(
       ex_ctrl_op  <= #1 `CTRL_NONE;
       ex_out      <= #1 `ZERO;
     end else begin
-      if (id_en_ == `ENABLE_) begin
-        ex_en_      <= #1 id_en_;
+      ex_en_ <= #1 id_en_;
+      if (flush == `ENABLE) begin
+        ex_w_addr   <= #1 `NULL;
+        ex_w_data   <= #1 `ZERO;
+        ex_gpr_we_  <= #1 `DISABLE_;
+        ex_exp_code <= #1 `EXP_NONE;
+        ex_mem_op   <= #1 `MEM_NONE;
+        ex_ctrl_op  <= #1 `CTRL_NONE;
+        ex_out      <= #1 `ZERO;
+      end else if (id_en_ == `ENABLE_) begin
         ex_w_addr   <= #1 id_w_addr;
         ex_w_data   <= #1 id_w_data;
         ex_gpr_we_  <= #1 id_gpr_we_;
@@ -45,9 +53,6 @@ module yutorina_ex_stage(
         ex_mem_op   <= #1 id_mem_op;
         ex_ctrl_op  <= #1 id_ctrl_op;
         ex_out      <= #1 alu_out;
-      end else begin
-        ex_en_ <= #1 `DISABLE_;
-        ex_gpr_we_  <= #1 id_gpr_we_;
       end
     end
   end

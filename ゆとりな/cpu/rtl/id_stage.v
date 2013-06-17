@@ -9,7 +9,8 @@
 `include "spr.h"
 
 module yutorina_id_stage(
-  input wire clk, input wire rst, input wire stall, input wire mode,
+  input wire clk, input wire rst, input wire stall, 
+  input wire flush, input wire mode,
   input wire [`GprAddrBus] ex_fwd_addr, input wire [`WordDataBus] ex_fwd_out,
   input wire [`GprAddrBus] mem_fwd_addr, input wire [`WordDataBus] mem_fwd_out,
   input wire [`WordDataBus] gpr_r_data1, input wire [`WordDataBus] gpr_r_data2,
@@ -65,8 +66,18 @@ module yutorina_id_stage(
       id_ctrl_op  <= #1 `CTRL_NONE;
       id_exp_code <= #1 `EXP_NONE;
     end else begin
-      if (if_en_ == `ENABLE_) begin
-        id_en_      <= #1 if_en_;
+      id_en_ <= #1 if_en_;
+      if (flush == `ENABLE) begin
+        id_alu_op   <= #1 `ALU_NOP;
+        id_alu_lhs  <= #1 `ZERO;
+        id_alu_rhs  <= #1 `ZERO;
+        id_w_addr   <= #1 `NULL;
+        id_w_data   <= #1 `ZERO;
+        id_gpr_we_  <= #1 `DISABLE_;
+        id_mem_op   <= #1 `MEM_NONE;
+        id_ctrl_op  <= #1 `CTRL_NONE;
+        id_exp_code <= #1 `EXP_NONE;
+      end else if (if_en_ == `ENABLE_) begin
         id_alu_op   <= #1 alu_op;
         id_alu_lhs  <= #1 alu_lhs;
         id_alu_rhs  <= #1 alu_rhs;
@@ -76,8 +87,6 @@ module yutorina_id_stage(
         id_mem_op   <= #1 mem_op;
         id_ctrl_op  <= #1 ctrl_op;
         id_exp_code <= #1 exp_code;
-      end else begin
-        id_en_      <= #1 `DISABLE_;
       end
     end
   end

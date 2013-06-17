@@ -9,7 +9,7 @@
 
 module yutorina_mem_stage(
   input wire clk, input wire rst, input wire stall, output wire busy,
-  input wire ex_en_,
+  input wire flush, input wire ex_en_,
   input wire [`GprAddrBus] ex_w_addr, input wire [`WordDataBus] ex_w_data,
   inout wire ex_gpr_we_, input wire [`ExpBus] ex_exp_code,
   input wire [`MemOpBus] ex_mem_op, input wire [`CtrlOpBus] ex_ctrl_op,
@@ -43,38 +43,37 @@ module yutorina_mem_stage(
       mem_ctrl_op  <= #1 `CTRL_NONE;
       mem_out      <= #1 `ZERO;
     end else begin
-      //if (ex_en_ == `ENABLE_) begin
-        mem_en_     <= #1 ex_en_;
-        mem_w_addr  <= #1 miss_align != `MISS_ALIGN_NONE ? `NULL : ex_w_addr;
-        mem_gpr_we_
-          <= #1 miss_align != `MISS_ALIGN_NONE ? `DISABLE_ : ex_gpr_we_;
-        case (miss_align)
-          `MISS_ALIGN_LOAD: begin
-            mem_exp_code <= #1 `EXP_LOAD_MISS_ALIGN;
-          end `MISS_ALIGN_STORE: begin
-            mem_exp_code <= #1 `EXP_STORE_MISS_ALIGN;
-          end default: begin
-            mem_exp_code <= #1 ex_exp_code;
-          end
-        endcase
-        mem_ctrl_op 
-          <= #1 miss_align != `MISS_ALIGN_NONE ? `CTRL_NONE : ex_ctrl_op;
-        mem_out      <= #1 miss_align != `MISS_ALIGN_NONE ? `ZERO : out;
-        if (ex_en_ == `ENABLE_) begin
-          spr_w_addr <= #1 miss_align != `MISS_ALIGN_NONE ? `SPR_ZERO : 
-                           ex_ctrl_op == `CTRL_SSR ? ex_w_addr : `SPR_ZERO;
-          spr_we_    <= #1 miss_align != `MISS_ALIGN_NONE ? `DISABLE_ : 
-                           ex_ctrl_op == `CTRL_SSR ? `ENABLE_ : `DISABLE_;
-          spr_w_data <= #1 miss_align != `MISS_ALIGN_NONE ? `ZERO : 
-                           ex_ctrl_op == `CTRL_SSR ? ex_w_data : `ZERO;
-        end else begin
-          spr_w_addr <= #1 `SPR_ZERO; 
-          spr_we_    <= #1 `DISABLE_;
-          spr_w_data <= #1 `ZERO;
+      mem_en_     <= #1 ex_en_;
+      case (miss_align)
+        `MISS_ALIGN_LOAD: begin
+          mem_exp_code <= #1 `EXP_LOAD_MISS_ALIGN;
+        end `MISS_ALIGN_STORE: begin
+          mem_exp_code <= #1 `EXP_STORE_MISS_ALIGN;
+        end default: begin
+          mem_exp_code <= #1 ex_exp_code;
         end
-      //end else begin
-        //mem_en_ <= #1 `DISABLE_;
-      //end
+      endcase
+      if (flush == `DISABLE && miss_align == `MISS_ALIGN_NONE) begin
+        mem_w_addr  <= #1 ex_w_addr;
+        mem_gpr_we_ <= #1 ex_gpr_we_;
+        mem_ctrl_op <= #1 ex_ctrl_op;
+        mem_out     <= #1 out;
+      end else begin
+        mem_w_addr  <= #1 `NULL;
+        mem_gpr_we_ <= #1 `DISABLE_;
+        mem_ctrl_op <= #1 `CTRL_NONE;
+        mem_out     <= #1 `ZERO;
+      end
+      if (ex_en_ == `ENABLE_ && flush == `DISABLE &&
+          miss_align == `MISS_ALIGN_NONE && ex_ctrl_op == `CTRL_SSR) begin
+        spr_w_addr <= #1 ex_w_addr;
+        spr_we_    <= #1 `ENABLE_;
+        spr_w_data <= #1 ex_w_data;
+      end else begin
+        spr_w_addr <= #1 `SPR_ZERO; 
+        spr_we_    <= #1 `DISABLE_;
+        spr_w_data <= #1 `ZERO;
+      end
     end
   end
   yutorina_mem_ctrl mem_ctrl(
