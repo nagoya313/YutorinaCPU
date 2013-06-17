@@ -17,7 +17,7 @@
 `define SPR_CNT_H       5'h3
 `define SPR_INT_MASK    5'h4
 `define SPR_INT_PENDING 5'h5
-`define SPR_RA          5'h6
+`define SPR_VECTOR      5'h6
 `define SPR_SP          5'h1f
 
 `endif

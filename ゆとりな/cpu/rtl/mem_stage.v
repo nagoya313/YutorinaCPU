@@ -59,7 +59,7 @@ module yutorina_mem_stage(
         mem_ctrl_op <= #1 ex_ctrl_op;
         mem_out     <= #1 out;
       end else begin
-        mem_w_addr  <= #1 `NULL;
+        mem_w_addr  <= #1 `GPR_ZERO;
         mem_gpr_we_ <= #1 `DISABLE_;
         mem_ctrl_op <= #1 `CTRL_NONE;
         mem_out     <= #1 `ZERO;
