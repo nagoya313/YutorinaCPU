@@ -47,6 +47,7 @@ module yutorina_ex_stage(
         ex_out      <= #1 alu_out;
       end else begin
         ex_en_ <= #1 `DISABLE_;
+        ex_gpr_we_  <= #1 id_gpr_we_;
       end
     end
   end

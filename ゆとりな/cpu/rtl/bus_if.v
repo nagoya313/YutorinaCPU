@@ -52,17 +52,22 @@ module yutorina_bus_if(
     input [`WordDataBus] r_buf;
     begin
       r_data_sel = `ZERO;
+      if (rw == `READ) begin
+        r_data_sel = s_index == `BUS_SLABE_1 ? spm_r_data : r_buf;
+      end
       case (bus_state)
         `BUS_STATE_IDLE: begin
           if (s_index == `BUS_SLABE_1 && as_ == `ENABLE_ && rw == `READ) begin
             r_data_sel = spm_r_data;
           end
         end `BUS_STATE_ACCESS: begin
-          if (bus_rdy_ == `ENABLE_) begin
+          if (bus_rdy_ == `ENABLE_ && rw == `READ) begin
             r_data_sel = bus_r_data;
           end
         end `BUS_STATE_STALL: begin
-          r_data_sel = r_buf;
+          if (rw == `READ) begin
+            r_data_sel = r_buf;
+          end
         end
       endcase
     end
@@ -82,6 +87,7 @@ module yutorina_bus_if(
       bus_addr   <= #1 `NULL;
       bus_w_data <= #1 `ZERO;
       bus_state  <= #1 `BUS_STATE_IDLE;
+      r_buf      <= #1 `ZERO;
     end else begin
       case (bus_state)
         `BUS_STATE_IDLE: begin
@@ -100,11 +106,21 @@ module yutorina_bus_if(
         end `BUS_STATE_ACCESS: begin
           bus_as_ <= #1 `DISABLE_;
           if (bus_rdy_ == `ENABLE_) begin
-            r_buf      <= #1 bus_r_data;
+            if (rw == `READ) begin
+              r_buf <= #1 bus_r_data;
+            end
             bus_req_   <= #1 `DISABLE_;
-            bus_state  <= #1 `BUS_STATE_IDLE;
             bus_addr   <= #1 `NULL;
             bus_w_data <= #1 `ZERO;
+            if (stall == `ENABLE) begin
+              bus_state <= #1 `BUS_STATE_STALL;
+            end else begin
+              bus_state  <= #1 `BUS_STATE_IDLE;
+            end
+          end
+        end `BUS_STATE_STALL: begin
+          if (stall == `DISABLE) begin
+              bus_state <= #1 `BUS_STATE_IDLE;
           end
         end
       endcase

@@ -5,10 +5,10 @@
 
 `include "spr.h"
 
-module yutorina_spr(input wire clk, input wire rst, input wire stall,
-                    input wire [`SprAddrBus] addr, 
-                    output wire [`WordDataBus] r_data,
-                    input wire wr, input wire [`WordDataBus] w_data);
+module yutorina_spr(
+  input wire clk, input wire rst, input wire we_,
+  input wire [`SprAddrBus] r_addr, input wire [`SprAddrBus] w_addr, 
+  output wire [`WordDataBus] r_data, input wire [`WordDataBus] w_data);
   reg [`SprCntBus] cnt;
   function [`WordDataBus] sel_spr;
     input [`SprAddrBus] addr;
@@ -24,13 +24,13 @@ module yutorina_spr(input wire clk, input wire rst, input wire stall,
       endcase
     end
   endfunction
-  assign r_data = sel_spr(addr);
+  assign r_data = sel_spr(r_addr);
   always @(posedge clk or `RESET_EDGE rst) begin
     if (rst == `RESET_ENABLE) begin
       cnt <= #1 `SPR_CNT_DATA_W'h0;
     end else begin
-      if (wr == `WRITE && stall == `DISABLE) begin
-        case (addr)
+      if (we_ == `ENABLE_) begin
+        case (w_addr)
 `ifdef YUTORINA_SIMULATION
           `SPR_SP: begin
             $display("%x", w_data);

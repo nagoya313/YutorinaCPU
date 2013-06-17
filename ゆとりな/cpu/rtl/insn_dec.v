@@ -199,16 +199,16 @@ module yutorina_insn_dec(
                       rb, `GPR_ZERO, ra, `FALSE, `NULL,
                       `ENABLE_, `MEM_R_BU, `CTRL_NONE, `EXP_NONE};
         end `OP_SW: begin
-          insn_dec = {`ALU_ADD, gpr_r_data1, s_imm32, `ZERO,
-                      rb, `GPR_ZERO, ra, `FALSE, `NULL,
+          insn_dec = {`ALU_ADD, gpr_r_data2, s_imm32, gpr_r_data1,
+                      ra, rb, `GPR_ZERO, `FALSE, `NULL,
                       `DISABLE_, `MEM_W_W, `CTRL_NONE, `EXP_NONE};
         end `OP_SH: begin
-          insn_dec = {`ALU_ADD, gpr_r_data1, s_imm32, `ZERO,
-                      rb, `GPR_ZERO, ra, `FALSE, `NULL,
+          insn_dec = {`ALU_ADD, gpr_r_data2, s_imm32, gpr_r_data1,
+                      ra, rb, `GPR_ZERO, `FALSE, `NULL,
                       `DISABLE_, `MEM_W_H, `CTRL_NONE, `EXP_NONE};
         end `OP_SB: begin
-          insn_dec = {`ALU_ADD, gpr_r_data1, s_imm32, `ZERO,
-                      rb, `GPR_ZERO, ra, `FALSE, `NULL,
+          insn_dec = {`ALU_ADD, gpr_r_data2, s_imm32, gpr_r_data1,
+                      ra, rb, `GPR_ZERO, `FALSE, `NULL,
                       `DISABLE_, `MEM_W_B, `CTRL_NONE, `EXP_NONE};
         end `OP_ADDIU: begin
           insn_dec = {`ALU_ADD, gpr_r_data1, imm32, `ZERO,

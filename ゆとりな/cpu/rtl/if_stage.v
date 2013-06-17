@@ -14,15 +14,15 @@ module yutorina_if_stage(
   input [`WordDataBus] spm_r_data, output [`SpmAddrBus] spm_addr,
   output spm_as_,
   input wire [`WordDataBus] bus_r_data, output wire [`WordDataBus] bus_w_data,
-  input wire bus_rdy_,  output wire bus_rw,
+  input wire bus_rdy_, output wire bus_rw,
   output wire bus_req_, output wire [`WordAddrBus] bus_addr,
   output wire bus_as_, input wire bus_grnt_,
   output reg [`WordAddrBus] if_pc, output reg [`WordDataBus] if_insn,
   output reg if_en_);
   wire rw = `READ;
   wire as_ = `ENABLE_;
-  wire [`WordDataBus] insn;
   wire [`WordDataBus] w_data = `ZERO;
+  wire [`WordDataBus] insn;
   yutorina_bus_if bus_if(
     .clk (clk), .rst (rst), .stall (stall),
     .rw (rw), .as_ (as_), .addr (if_pc), .w_data (w_data), .r_data (insn),
