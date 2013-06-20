@@ -11,6 +11,7 @@
 module yutorina_if_stage(
   input wire clk, input wire rst, input wire stall, output wire busy,
   input wire flush, input wire br_taken, input wire [`WordAddrBus] br_addr,
+  input wire [`WordAddrBus] new_pc,
   input [`WordDataBus] spm_r_data, output [`SpmAddrBus] spm_addr,
   output spm_as_,
   input wire [`WordDataBus] bus_r_data, output wire [`WordDataBus] bus_w_data,
@@ -39,7 +40,7 @@ module yutorina_if_stage(
     end else begin
       if (stall == `DISABLE) begin
         if (flush == `ENABLE) begin
-           if_pc   <= #1 32'd22;
+           if_pc   <= #1 new_pc;
            if_insn <= #1 `ZERO;
            if_en_  <= #1 `ENABLE_;
         end else if (br_taken == `ENABLE) begin

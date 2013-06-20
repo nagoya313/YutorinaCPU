@@ -30,5 +30,6 @@
 `define CTRL_NONE 2'b00
 `define CTRL_SSR  2'b01
 `define CTRL_LSR  2'b10
+`define CTRL_ERET 2'b11
 
 `endif

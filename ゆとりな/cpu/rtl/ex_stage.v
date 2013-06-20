@@ -9,12 +9,13 @@
 
 module yutorina_ex_stage(
   input wire clk, input wire rst, input wire stall, input wire flush,
-  input wire id_en_, input wire [`AluOpBus] id_alu_op,
+  input wire id_en_, input wire [`WordAddrBus] id_pc,
+  input wire [`AluOpBus] id_alu_op,
   input wire [`WordDataBus] id_alu_lhs, input wire [`WordDataBus] id_alu_rhs,
   input wire [`GprAddrBus] id_w_addr, input wire [`WordDataBus] id_w_data,
   input wire id_gpr_we_, input wire [`ExpBus] id_exp_code,
   input wire [`MemOpBus] id_mem_op, input wire [`CtrlOpBus] id_ctrl_op,
-  output reg ex_en_,
+  output reg ex_en_, output reg [`WordAddrBus] ex_pc,
   output reg [`GprAddrBus] ex_w_addr, output reg [`WordDataBus] ex_w_data,
   output reg ex_gpr_we_, output reg [`ExpBus] ex_exp_code,
   output reg [`MemOpBus] ex_mem_op, output reg [`CtrlOpBus] ex_ctrl_op,
@@ -28,6 +29,7 @@ module yutorina_ex_stage(
   always @(posedge clk or `RESET_EDGE rst) begin
     if (rst == `RESET_ENABLE) begin
       ex_en_      <= #1 `DISABLE_;
+      ex_pc       <= #1 `NULL;
       ex_w_addr   <= #1 `GPR_ZERO;
       ex_w_data   <= #1 `NULL;
       ex_gpr_we_  <= #1 `DISABLE_;
@@ -37,6 +39,7 @@ module yutorina_ex_stage(
       ex_out      <= #1 `ZERO;
     end else begin
       ex_en_ <= #1 id_en_;
+      ex_pc  <= #1 id_pc;
       if (flush == `ENABLE) begin
         ex_w_addr   <= #1 `NULL;
         ex_w_data   <= #1 `ZERO;

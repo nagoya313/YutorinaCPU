@@ -9,12 +9,13 @@
 
 module yutorina_mem_stage(
   input wire clk, input wire rst, input wire stall, output wire busy,
-  input wire flush, input wire ex_en_,
+  input wire flush, input wire ex_en_, input wire [`WordAddrBus] ex_pc,
   input wire [`GprAddrBus] ex_w_addr, input wire [`WordDataBus] ex_w_data,
   inout wire ex_gpr_we_, input wire [`ExpBus] ex_exp_code,
   input wire [`MemOpBus] ex_mem_op, input wire [`CtrlOpBus] ex_ctrl_op,
   input wire [`WordDataBus] ex_out,
-  output reg mem_en_, output reg [`GprAddrBus] mem_w_addr,
+  output reg mem_en_, output reg [`WordAddrBus] mem_pc,
+  output reg [`GprAddrBus] mem_w_addr,
   output reg mem_gpr_we_, output reg [`ExpBus] mem_exp_code,
   output reg [`CtrlOpBus] mem_ctrl_op, output reg [`WordDataBus] mem_out,
   input wire [`WordDataBus] spm_r_data, output wire [`WordDataBus] spm_w_data,
@@ -37,13 +38,14 @@ module yutorina_mem_stage(
   always @(posedge clk or `RESET_EDGE rst) begin
     if (rst == `RESET_ENABLE) begin
       mem_en_      <= #1 `DISABLE_;
+      mem_pc       <= #1 `NULL;
       mem_w_addr   <= #1 `GPR_ZERO;
       mem_gpr_we_  <= #1 `DISABLE_;
       mem_exp_code <= #1 `EXP_NONE;
       mem_ctrl_op  <= #1 `CTRL_NONE;
       mem_out      <= #1 `ZERO;
     end else begin
-      mem_en_     <= #1 ex_en_;
+      mem_en_ <= #1 ex_en_;
       case (miss_align)
         `MISS_ALIGN_LOAD: begin
           mem_exp_code <= #1 `EXP_LOAD_MISS_ALIGN;
@@ -53,6 +55,11 @@ module yutorina_mem_stage(
           mem_exp_code <= #1 ex_exp_code;
         end
       endcase
+      if (ex_exp_code == `EXP_NONE && miss_align == `MISS_ALIGN_NONE) begin
+        mem_pc  <= #1 ex_pc;
+      end else begin
+        mem_pc  <= #1 ex_pc - 1;
+      end
       if (flush == `DISABLE && miss_align == `MISS_ALIGN_NONE) begin
         mem_w_addr  <= #1 ex_w_addr;
         mem_gpr_we_ <= #1 ex_gpr_we_;

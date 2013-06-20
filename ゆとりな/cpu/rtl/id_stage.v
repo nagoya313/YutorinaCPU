@@ -20,7 +20,8 @@ module yutorina_id_stage(
   output wire ld_haz,
   input wire if_en_, input wire [`WordAddrBus] if_pc,
   input wire [`WordDataBus] if_insn,
-  output reg id_en_, output reg [`AluOpBus] id_alu_op,
+  output reg id_en_, output reg [`WordAddrBus] id_pc,
+  output reg [`AluOpBus] id_alu_op,
   output reg [`WordDataBus] id_alu_lhs, output reg [`WordDataBus] id_alu_rhs,
   output reg [`GprAddrBus] id_w_addr, output reg [`WordDataBus] id_w_data,
   output wire [`SprAddrBus] spr_r_addr,
@@ -56,6 +57,7 @@ module yutorina_id_stage(
   always @(posedge clk or `RESET_EDGE rst) begin
     if (rst == `RESET_ENABLE) begin
       id_en_      <= #1 `DISABLE_;
+      id_pc       <= #1 `NULL;
       id_alu_op   <= #1 `ALU_NOP;
       id_alu_lhs  <= #1 `ZERO;
       id_alu_rhs  <= #1 `ZERO;
@@ -67,6 +69,7 @@ module yutorina_id_stage(
       id_exp_code <= #1 `EXP_NONE;
     end else begin
       id_en_ <= #1 if_en_;
+      id_pc  <= #1 if_pc;
       if (flush == `ENABLE) begin
         id_alu_op   <= #1 `ALU_NOP;
         id_alu_lhs  <= #1 `ZERO;
