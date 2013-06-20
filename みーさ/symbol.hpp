@@ -35,8 +35,8 @@ const struct insn1r : boost::spirit::qi::symbols<char, int> {
 const struct insn0r_ : boost::spirit::qi::symbols<char, std::uint32_t> {
   insn0r_() {
     add("trap", op_sp | f_trap)
-       ("ret", op_jmpr | f_jmp | (reg_ra << ra_shift))
-       ("eret", op_ker | f_eret)("nop", 0x00000000);
+       ("ret", op_jmpr | f_jmp | ra(reg_ra))
+       ("eret", op_ker | f_eret)("nop", nop);
   }
 } insn0r;
 
@@ -67,6 +67,24 @@ const struct macrob_ : boost::spirit::qi::symbols<char, std::uint32_t> {
     add("beq", op_beq)("bne", op_bne);
   }
 } macrob;
+
+const struct macrola_ : boost::spirit::qi::symbols<char, std::uint32_t> {
+  macrola_() {
+    add("la", nop);
+  }
+} macrola;
+
+const struct macroli_ : boost::spirit::qi::symbols<char, std::uint32_t> {
+  macroli_() {
+    add("li", op_addiu);
+  }
+} macroli;
+
+const struct macrom_ : boost::spirit::qi::symbols<char, std::uint32_t> {
+  macrom_() {
+    add("mov", op_addiu);
+  }
+} macrom;
 
 const struct gpr_ : boost::spirit::qi::symbols<char, std::uint8_t> {
   gpr_() {
