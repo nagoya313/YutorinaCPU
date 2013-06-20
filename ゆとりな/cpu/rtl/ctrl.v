@@ -61,7 +61,7 @@ module yutorina_ctrl(
       mode     <= #1 `MODE_KERNEL;
     end else begin
       cnt <= #1 cnt + 1;
-      if (id_en_ == `ENABLE && ctrl_op == `CTRL_ERET) begin
+      if (id_en_ == `ENABLE_ && ctrl_op == `CTRL_ERET) begin
         flush    <= #1 `ENABLE;
         id_flush <= #1 `ENABLE;
         new_pc   <= #1 epc;

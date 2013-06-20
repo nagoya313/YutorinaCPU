@@ -306,7 +306,7 @@ module yutorina_insn_dec(
               if (mod == `MODE_KERNEL) begin
                 insn_dec = {`ALU_NOP, `ZERO, `ZERO, `ZERO,
                             `GPR_ZERO, `GPR_ZERO, `GPR_ZERO, `TRUE, `NULL,
-                            `DISABLE_, `MEM_NONE, `CTRL_NONE, `EXP_NONE};
+                            `DISABLE_, `MEM_NONE, `CTRL_ERET, `EXP_NONE};
               end else begin
                 insn_dec = prv_err;
               end
