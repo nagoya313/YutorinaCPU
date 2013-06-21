@@ -23,23 +23,21 @@ module yutorina_mem_ctrl(
     begin
       byte = ex_out[`ByteOffsetLocale];
       mem_ctrl = {o_data, `MISS_ALIGN_NONE, `DISABLE_, `READ};
-      //if (ex_en_ == `ENABLE_) begin
-        case (mem_op)
-          `MEM_W_W: begin
-            if (byte == 2'b00) begin
-              mem_ctrl = {`ZERO, `MISS_ALIGN_NONE, ex_en_, `WRITE};
-            end else begin
-              mem_ctrl = {`ZERO, `MISS_ALIGN_STORE, `DISABLE_, `READ};
-            end
-          end `MEM_R_W: begin
-            if (byte == 2'b00) begin
-              mem_ctrl = {r_data, `MISS_ALIGN_NONE, ex_en_, `READ};
-            end else begin
-              mem_ctrl = {`ZERO, `MISS_ALIGN_LOAD, `DISABLE_, `READ};
-            end
+      case (mem_op)
+        `MEM_W_W: begin
+          if (byte == 2'b00) begin
+            mem_ctrl = {`ZERO, `MISS_ALIGN_NONE, ex_en_, `WRITE};
+          end else begin
+            mem_ctrl = {`ZERO, `MISS_ALIGN_STORE, `DISABLE_, `READ};
           end
-        endcase
-      //end
+        end `MEM_R_W: begin
+          if (byte == 2'b00) begin
+            mem_ctrl = {r_data, `MISS_ALIGN_NONE, ex_en_, `READ};
+          end else begin
+            mem_ctrl = {`ZERO, `MISS_ALIGN_LOAD, `DISABLE_, `READ};
+          end
+        end
+      endcase
     end
   endfunction
   assign {out, miss_align, as_, rw}

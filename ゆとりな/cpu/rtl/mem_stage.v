@@ -9,7 +9,8 @@
 
 module yutorina_mem_stage(
   input wire clk, input wire rst, input wire stall, output wire busy,
-  input wire flush, input wire ex_en_, input wire [`WordAddrBus] ex_pc,
+  input wire flush, input wire int,
+  input wire ex_en_, input wire [`WordAddrBus] ex_pc,
   input wire [`GprAddrBus] ex_w_addr, input wire [`WordDataBus] ex_w_data,
   inout wire ex_gpr_we_, input wire [`ExpBus] ex_exp_code,
   input wire [`MemOpBus] ex_mem_op, input wire [`CtrlOpBus] ex_ctrl_op,
@@ -55,6 +56,9 @@ module yutorina_mem_stage(
           mem_exp_code <= #1 ex_exp_code;
         end
       endcase
+      if (int == `ENABLE) begin
+        mem_exp_code <= #1 `EXP_INT;
+      end
       if (ex_exp_code == `EXP_NONE && miss_align == `MISS_ALIGN_NONE) begin
         mem_pc  <= #1 ex_pc;
       end else begin

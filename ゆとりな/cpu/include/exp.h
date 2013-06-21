@@ -9,5 +9,6 @@
 `define EXP_STORE_MISS_ALIGN 5'b00011
 `define EXP_TRAP             5'b00100
 `define EXP_PRV_INSN         5'b00101
+`define EXP_INT              5'b00110
 
 `endif

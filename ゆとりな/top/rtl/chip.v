@@ -4,6 +4,7 @@
 `include "timescale.h"
 
 `include "rom.h"
+`include "timer.h"
 
 module yutorina_chip(input wire clk, input wire clk_, input wire rst);
   wire [`WordDataBus] m_r_data; 
@@ -37,12 +38,16 @@ module yutorina_chip(input wire clk, input wire clk_, input wire rst);
   wire s_rw;
   wire [`WordDataBus] s_w_data;
   wire rom_cs_;
-  wire rom_as_;
   wire [`WordDataBus] rom_r_data;
   wire rom_rdy_;
+  wire timer_cs_;
+  wire [`WordDataBus] timer_r_data;
+  wire timer_rdy_;
+  wire timer_int;
   wire [`WordDataBus] null_s_r_data = `ZERO;
   wire null_s_rdy_                  = `DISABLE_;
   wire null_s_cs_;
+  wire int = timer_int;
   yutorina_cpu cpu(.clk (clk), .clk_ (clk_), .rst (rst),
                    .i_r_data (m_r_data), .i_rdy_ (m_rdy_),
                    .i_req_ (cpu_i_req_), .i_addr (cpu_i_addr),
@@ -51,7 +56,8 @@ module yutorina_chip(input wire clk, input wire clk_, input wire rst);
                    .d_r_data (m_r_data), .d_rdy_ (m_rdy_),
                    .d_req_ (cpu_d_req_), .d_addr (cpu_d_addr),
                    .d_as_ (cpu_d_as_), .d_rw (cpu_d_rw),
-                   .d_w_data (cpu_d_w_data), .d_grnt_ (cpu_d_grnt_));
+                   .d_w_data (cpu_d_w_data), .d_grnt_ (cpu_d_grnt_),
+                   .int (int));
   yutorina_bus bus(
     .clk (clk), .rst (rst),
     .m_r_data (m_r_data), .m_rdy_ (m_rdy_),
@@ -66,13 +72,17 @@ module yutorina_chip(input wire clk, input wire clk_, input wire rst);
     .s_addr (s_addr), .s_as_ (s_as_), .s_rw (s_rw), .s_w_data (s_w_data),
     .s0_r_data (rom_r_data), .s0_rdy_ (rom_rdy_), .s0_cs_ (rom_cs_),
     .s1_r_data (null_s_r_data), .s1_rdy_ (null_s_rdy_), .s1_cs_ (null_s_cs_),
-    .s2_r_data (null_s_r_data), .s2_rdy_ (null_s_rdy_), .s2_cs_ (null_s_cs_),
+    .s2_r_data (timer_r_data), .s2_rdy_ (timer_rdy_), .s2_cs_ (timer_cs_),
     .s3_r_data (null_s_r_data), .s3_rdy_ (null_s_rdy_), .s3_cs_ (null_s_cs_),
     .s4_r_data (null_s_r_data), .s4_rdy_ (null_s_rdy_), .s4_cs_ (null_s_cs_),
     .s5_r_data (null_s_r_data), .s5_rdy_ (null_s_rdy_), .s5_cs_ (null_s_cs_),
     .s6_r_data (null_s_r_data), .s6_rdy_ (null_s_rdy_), .s6_cs_ (null_s_cs_),
     .s7_r_data (null_s_r_data), .s7_rdy_ (null_s_rdy_), .s7_cs_ (null_s_cs_));
   yutorina_rom rom(.clk (clk), .rst (rst), .cs_ (rom_cs_), .as_ (s_as_),
-                   .addr (s_addr[`RomAddrBus]),
+                   .addr (s_addr[`RomAddrLocale]),
                    .r_data (rom_r_data), .rdy_ (rom_rdy_));
+  yutorina_timer timer(.clk (clk), .rst (rst), .cs_ (timer_cs_), .as_ (s_as_),
+                       .addr (s_addr[`TimerAddrLocale]), .rdy_ (timer_rdy_),
+                       .r_data (timer_r_data), .w_data (s_w_data), .rw (s_rw),
+                       .int (timer_int));
 endmodule

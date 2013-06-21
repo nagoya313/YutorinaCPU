@@ -20,6 +20,7 @@ module yutorina_ctrl(
   reg [`WordAddrBus] epc;
   reg [`SprCntBus] cnt;
   reg pre_mode;
+  reg int_mask;
   assign stall = i_busy | d_busy;
   function [`WordDataBus] sel_spr;
     input [`SprAddrBus] addr;
@@ -59,6 +60,7 @@ module yutorina_ctrl(
       cnt      <= #1 `SPR_CNT_DATA_W'h0;
       v_addr   <= #1 `NULL;
       mode     <= #1 `MODE_KERNEL;
+      int_mask <= #1 `DISABLE;
     end else begin
       cnt <= #1 cnt + 1;
       if (id_en_ == `ENABLE_ && ctrl_op == `CTRL_ERET) begin
@@ -68,15 +70,18 @@ module yutorina_ctrl(
         epc      <= #1 `NULL;
         pre_mode <= #1 `MODE_KERNEL;
         mode     <= #1 pre_mode;
+        int_mask <= #1 `DISABLE;
       end else if (mem_en_ == `ENABLE_) begin
         id_flush <= #1 `DISABLE;
-        if (exp_code != `EXP_NONE) begin
+        if (flush == `DISABLE && exp_code != `EXP_NONE &&
+            !(exp_code == `EXP_INT && int_mask == `ENABLE)) begin
           $display("Exception!(code=%x)", exp_code);
           flush    <= #1 `ENABLE;
           new_pc   <= #1 v_addr;
           epc      <= #1 mem_pc;
           pre_mode <= #1 mode;
           mode     <= #1 `MODE_KERNEL;
+          int_mask <= #1 `ENABLE;
         end else if (we_ == `ENABLE_) begin
           flush  <= #1 `ENABLE;
           new_pc <= #1 mem_pc;

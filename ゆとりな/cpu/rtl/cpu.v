@@ -16,7 +16,8 @@ module yutorina_cpu(
   output wire [`WordDataBus] i_w_data, input wire i_grnt_,
   input wire [`WordDataBus] d_r_data, input wire d_rdy_, output wire d_req_,
   output wire [`WordAddrBus] d_addr, output wire d_as_, output d_rw,
-  output wire [`WordDataBus] d_w_data, input wire d_grnt_);
+  output wire [`WordDataBus] d_w_data, input wire d_grnt_,
+  input wire int);
   wire stall;
   wire mode;
   wire i_busy;
@@ -115,7 +116,7 @@ module yutorina_cpu(
     .fwd_out (ex_fwd_out), .fwd_addr (ex_fwd_addr));
   yutorina_mem_stage mem_stage(
     .clk (clk), .rst (rst), .stall (stall), .busy (d_busy), .flush (flush),
-    .ex_en_ (ex_en_), .ex_pc (ex_pc),
+    .int (int), .ex_en_ (ex_en_), .ex_pc (ex_pc),
     .ex_w_addr (ex_w_addr), .ex_w_data (ex_w_data),
     .ex_gpr_we_ (ex_gpr_we_), .ex_exp_code (ex_exp_code),
     .ex_mem_op (ex_mem_op), .ex_ctrl_op (ex_ctrl_op), .ex_out (ex_out),
