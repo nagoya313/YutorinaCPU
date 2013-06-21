@@ -43,11 +43,12 @@ int main(int argc, char **argv) try {
 	  std::cerr << std::count(str.cbegin(), it, '\n') + 1 << 
 	  "行目：パースエラー。" << '"' <<
 	  std::string(it, std::find(it, str.cend(), '\n')) << '"' << std::endl;
-	}
-	asp.link();
-	for (const auto insn : asp.get_bin()) {
-	  fout << std::hex << std::setw(8) << std::setfill('0') <<
-	  insn << std::endl;
+	} else {
+  	asp.link();
+	  for (const auto insn : asp.get_bin()) {
+	    fout << std::hex << std::setw(8) << std::setfill('0') <<
+	    insn << std::endl;
+    }
   }
 } catch (const std::exception &err) {
   std::cerr << err.what() << std::endl;
