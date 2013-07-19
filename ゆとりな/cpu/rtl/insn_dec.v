@@ -144,7 +144,7 @@ module yutorina_insn_dec(
                             rb, rc, ra, `FALSE, `NULL,
                             `ENABLE_, `MEM_NONE, `CTRL_NONE, `EXP_NONE};
               end else if (shamt == `SHAMT_IMM) begin
-                insn_dec = {`ALU_SLR, gpr_r_data1, r_imm32, `ZERO,
+                insn_dec = {`ALU_SLL, gpr_r_data1, r_imm32, `ZERO,
                             rb, rc, ra, `FALSE, `NULL,
                             `ENABLE_, `MEM_NONE, `CTRL_NONE, `EXP_NONE};
               end else begin
@@ -243,11 +243,11 @@ module yutorina_insn_dec(
                       rb, `GPR_ZERO, ra, `FALSE, `NULL,
                       `ENABLE_, `MEM_NONE, `CTRL_NONE, `EXP_NONE};
         end `OP_BEQ: begin
-          insn_dec = {`ALU_NOP, `ZERO, `ZERO, `ZERO, rb, rc, `GPR_ZERO,
+          insn_dec = {`ALU_NOP, `ZERO, `ZERO, `ZERO, ra, rb, `GPR_ZERO,
                       gpr_r_data1 == gpr_r_data2 ? `TRUE : `FALSE, b_addr,
                       `DISABLE_, `MEM_NONE, `CTRL_NONE, `EXP_NONE};
         end `OP_BNE: begin
-          insn_dec = {`ALU_NOP, `ZERO, `ZERO, `ZERO, rb, rc, `GPR_ZERO,
+          insn_dec = {`ALU_NOP, `ZERO, `ZERO, `ZERO, ra, rb, `GPR_ZERO,
                       gpr_r_data1 != gpr_r_data2 ? `TRUE : `FALSE, b_addr,
                       `DISABLE_, `MEM_NONE, `CTRL_NONE, `EXP_NONE};
         end `OP_JMP: begin

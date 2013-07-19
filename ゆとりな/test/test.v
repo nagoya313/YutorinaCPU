@@ -26,7 +26,7 @@ module cpu_tset();
     #(STEP *3 / 4) begin
       rst <= `RESET_DISABLE;
     end
-    #10000000 begin
+    #100000000 begin
       $finish;
     end
   end

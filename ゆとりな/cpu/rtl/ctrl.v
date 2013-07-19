@@ -93,7 +93,7 @@ module yutorina_ctrl(
             end
 `ifdef YUTORINA_SIMULATION
             `SPR_SP: begin
-              $display("%x", w_data);
+              $display("%d", w_data);
             end
 `endif
           endcase

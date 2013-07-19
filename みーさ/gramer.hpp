@@ -75,7 +75,7 @@ struct as :
         throw std::runtime_error("リンクエラー：シンボル\"" + p.first +
                                  "\"が見つかりません。");
       } else if (boost::numeric::in(it->second - p.second, short_check)) {
-        bin[p.second - 1] |= static_cast<std::uint16_t>(it->second - p.second);
+        bin[p.second - 1] |= static_cast<std::uint16_t>(static_cast<std::uint16_t>(it->second) - static_cast<std::uint16_t>(p.second));
       } else {
         throw std::runtime_error("リンクエラー：シンボル\"" + p.first +
                                  "\"が遠過ぎてリンク出來ません。");
