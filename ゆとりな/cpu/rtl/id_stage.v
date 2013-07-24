@@ -37,11 +37,13 @@ module yutorina_id_stage(
   wire [`CtrlOpBus] ctrl_op;
   wire [`ExpBus] exp_code;
   wire [`WordDataBus] r_data1
-    = gpr_r_addr1 == mem_fwd_addr ? mem_fwd_out :
-      gpr_r_addr1 == ex_fwd_addr ? ex_fwd_out : gpr_r_data1;
+    = gpr_r_addr1 == `GPR_ZERO ? gpr_r_data1 :
+      gpr_r_addr1 == ex_fwd_addr ? ex_fwd_out :
+      gpr_r_addr1 == mem_fwd_addr ? mem_fwd_out : gpr_r_data1;
   wire [`WordDataBus] r_data2
-    = gpr_r_addr2 == mem_fwd_addr ? mem_fwd_out :
-      gpr_r_addr2 == ex_fwd_addr ? ex_fwd_out : gpr_r_data2;
+    = gpr_r_addr2 == `GPR_ZERO ? gpr_r_data2 :
+      gpr_r_addr2 == ex_fwd_addr ? ex_fwd_out :
+      gpr_r_addr2 == mem_fwd_addr ? mem_fwd_out : gpr_r_data2;
   assign spr_r_addr = ctrl_op == `CTRL_LSR ? gpr_r_addr1 : `SPR_ZERO;
   assign ld_haz = mem_op == `MEM_R_W || mem_op == `MEM_R_H ||
                   mem_op == `MEM_R_B || mem_op == `MEM_R_HU ||

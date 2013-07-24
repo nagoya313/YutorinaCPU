@@ -6,7 +6,7 @@
 `include "gpr.h"
 
 module yutorina_gpr(
-  input wire clk, input wire rst,
+  input wire clk, input wire rst, input wire flush,
   input wire [`GprAddrBus] r_addr1, output wire [`WordDataBus] r_data1,
   input wire [`GprAddrBus] r_addr2, output wire [`WordDataBus] r_data2,
   input wire we_,
@@ -59,7 +59,7 @@ module yutorina_gpr(
         gprs[i] <= #1 `WORD_DATA_W'h0;
       end
     end else begin
-      if (we_ == `ENABLE_ && w_addr != `GPR_ZERO) begin
+      if (we_ == `ENABLE_ && w_addr != `GPR_ZERO && flush == `DISABLE) begin
         gprs[w_addr] <= #1 w_data;
       end
     end

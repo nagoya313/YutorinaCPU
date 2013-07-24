@@ -136,7 +136,7 @@ module yutorina_cpu(
     .d_addr (spm_d_addr), .d_as_ (spm_d_as_), .d_rw (spm_d_rw),
     .d_w_data (spm_d_w_data), .d_r_data (spm_d_r_data));
   yutorina_gpr gpr(
-    .clk (clk), .rst (rst), 
+    .clk (clk), .rst (rst), .flush (flush),
     .r_addr1 (gpr_r_addr1), .r_data1 (gpr_r_data1),
     .r_addr2 (gpr_r_addr2), .r_data2 (gpr_r_data2),
     .we_ (mem_gpr_we_), .w_addr (mem_w_addr), .w_data (mem_out));
